@@ -42,17 +42,17 @@ using namespace std::chrono;
 #define warp_size 32
 #define NBytes 8
 
-inline uint lsr(uint x, int sa) {
+inline uint32_t lsr(uint32_t x, int sa) {
   if(sa > 0 && sa < 32) return (x >> sa);
   return x;
 }
 
-inline uint lsl(uint x, int sa) {
+inline uint32_t lsl(uint32_t x, int sa) {
   if (sa > 0 && sa < 32) return (x << sa);
   return x;
 }
 
-inline uint set_bit(uint &data, int y) {
+inline uint32_t set_bit(uint32_t &data, int y) {
   data |= lsl(1, y);
   return data;
 }
@@ -85,8 +85,8 @@ int main(int argc, const char * const argv[])
 
   int F_ErrorThreshold =0;
 
-  uint* ReadSeq = (uint *) calloc(NumReads * 8, sizeof(uint));
-  uint* RefSeq = (uint *) calloc(NumReads * 8, sizeof(uint));
+  uint32_t* ReadSeq = (uint32_t *) calloc(NumReads * 8, sizeof(uint32_t));
+  uint32_t* RefSeq = (uint32_t *) calloc(NumReads * 8, sizeof(uint32_t));
   int* DFinal_Results = (int *) calloc(NumReads, sizeof(int));
   int* HFinal_Results = (int *) calloc(NumReads, sizeof(int));
 
@@ -160,10 +160,10 @@ int main(int argc, const char * const argv[])
   sycl::queue q(sycl::cpu_selector_v, sycl::property::queue::in_order());
 #endif
 
-  uint *d_ReadSeq = sycl::malloc_device<uint>(NumReads * 8, q);
+  uint32_t *d_ReadSeq = sycl::malloc_device<uint32_t>(NumReads * 8, q);
   q.memcpy(d_ReadSeq, ReadSeq, sizeof(int) * NumReads * 8);
 
-  uint *d_RefSeq = sycl::malloc_device<uint>(NumReads * 8, q);
+  uint32_t *d_RefSeq = sycl::malloc_device<uint32_t>(NumReads * 8, q);
   q.memcpy(d_RefSeq, RefSeq, sizeof(int) * NumReads * 8);
 
    int *d_Results = sycl::malloc_device<int>(NumReads, q);

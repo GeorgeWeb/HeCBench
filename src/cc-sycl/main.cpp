@@ -399,6 +399,7 @@ static void computeCC(const int repeat,
   float runtime = elapsed_seconds.count() / repeat;
 
   printf("compute time: %.4f s\n", runtime);
+  fflush(stdout);
   printf("throughput: %.3f Mnodes/s\n", nodes * 0.000001 / runtime);
   printf("throughput: %.3f Medges/s\n", edges * 0.000001 / runtime);
 

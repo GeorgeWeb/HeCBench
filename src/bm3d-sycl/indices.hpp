@@ -8,7 +8,7 @@
 #define idx3(x,y,z,dim_x,dim_y) ( (x) + ((y)*(dim_x)) + ((z)*(dim_x)*(dim_y)) )
 
 template<typename T>
-inline T* idx2p(T* BaseAddress, uint Column, uint Row, uint pitch)
+inline T* idx2p(T* BaseAddress, uint32_t Column, uint32_t Row, uint32_t pitch)
 {
   return (T*)((char*)BaseAddress + Row * pitch) + Column;
 }

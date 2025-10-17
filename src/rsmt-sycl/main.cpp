@@ -474,6 +474,7 @@ static void computeRSMT(queue &q,
   gettimeofday(&end, NULL);
   const double runtime = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
   printf("compute time: %.6f s\n", runtime);
+  fflush(stdout);
   printf("throughput: %.f nets/sec\n", numnets / runtime);
 
   // transfer results from GPU

@@ -91,6 +91,7 @@ int main()
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time (task1) %f (s)\n", time * 1e-9f);
+  fflush(stdout);
 
   q.memcpy(Results, d_ResultsPixel, sizeof(double) * IMAGE_SIZE * IMAGE_SIZE * 3).wait();
 
@@ -138,6 +139,7 @@ int main()
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time (task2) %f (s)\n", time * 1e-9f);
+  fflush(stdout);
 
   q.memcpy(Results, d_ResultsPixel, sizeof(double) * IMAGE_SIZE * IMAGE_SIZE * 3).wait();
 

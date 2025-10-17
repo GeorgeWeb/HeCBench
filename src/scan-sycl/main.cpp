@@ -193,6 +193,7 @@ void runTest (sycl::queue &q, const int64_t n, const int repeat, bool timing = f
   if (timing) {
     printf("Element size in bytes is %zu. Average execution time of scan (w/  bank conflicts): %f (us)\n",
            sizeof(T), (time * 1e-3f) / repeat);
+    fflush(stdout);
   }
   q.memcpy(gpu_out, d_out, bytes).wait();
   if (!timing) verify(cpu_out, gpu_out, nelems);
@@ -215,6 +216,7 @@ void runTest (sycl::queue &q, const int64_t n, const int repeat, bool timing = f
   if (timing) {
     printf("Element size in bytes is %zu. Average execution time of scan (w/o bank conflicts): %f (us). ",
            sizeof(T), (bcao_time * 1e-3f) / repeat);
+    fflush(stdout);
     printf("Reduce the time by %.1f%%\n", (time - bcao_time) * 1.0 / time * 100);
   }
   q.memcpy(gpu_out, d_out, bytes).wait();

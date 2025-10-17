@@ -48,36 +48,36 @@ void run_solver(
   const DOUBLE *__restrict sol_in,
   DOUBLE *__restrict sol_out,
   bool *__restrict con,
-  const uint*__restrict list,
+  const uint32_t*__restrict list,
   int xdim, int ydim, int zdim,
-  int nIter, uint nActiveBlock)
+  int nIter, uint32_t nActiveBlock)
 {
-  uint list_idx = item.get_group(1)*item.get_group_range(2) + item.get_group(2);
+  uint32_t list_idx = item.get_group(1)*item.get_group_range(2) + item.get_group(2);
 
   if(list_idx < nActiveBlock)
   {
     // retrieve actual block index from the active list
-    uint block_idx = list[list_idx];
+    uint32_t block_idx = list[list_idx];
 
     double F;
     bool isValid;
-    uint blocksize = BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH;
-    uint base_addr = block_idx*blocksize;
+    uint32_t blocksize = BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH;
+    uint32_t base_addr = block_idx*blocksize;
 
-    uint xgridlength = xdim/BLOCK_LENGTH;
-    uint ygridlength = ydim/BLOCK_LENGTH;
-    uint zgridlength = zdim/BLOCK_LENGTH;
+    uint32_t xgridlength = xdim/BLOCK_LENGTH;
+    uint32_t ygridlength = ydim/BLOCK_LENGTH;
+    uint32_t zgridlength = zdim/BLOCK_LENGTH;
 
     // compute block index
-    uint bx = block_idx%xgridlength;
-    uint tmpIdx = (block_idx - bx)/xgridlength;
-    uint by = tmpIdx%ygridlength;
-    uint bz = (tmpIdx-by)/ygridlength;
+    uint32_t bx = block_idx%xgridlength;
+    uint32_t tmpIdx = (block_idx - bx)/xgridlength;
+    uint32_t by = tmpIdx%ygridlength;
+    uint32_t bz = (tmpIdx-by)/ygridlength;
 
-    uint tx = item.get_local_id(2);
-    uint ty = item.get_local_id(1);
-    uint tz = item.get_local_id(0);
-    uint tIdx = tz*BLOCK_LENGTH*BLOCK_LENGTH + ty*BLOCK_LENGTH + tx;
+    uint32_t tx = item.get_local_id(2);
+    uint32_t ty = item.get_local_id(1);
+    uint32_t tz = item.get_local_id(0);
+    uint32_t tIdx = tz*BLOCK_LENGTH*BLOCK_LENGTH + ty*BLOCK_LENGTH + tx;
 
     //__shared__ DOUBLE _sol[BLOCK_LENGTH+2][BLOCK_LENGTH+2][BLOCK_LENGTH+2];
     sycl::multi_ptr<DOUBLE[BLOCK_LENGTH+2][BLOCK_LENGTH+2][BLOCK_LENGTH+2], \
@@ -95,7 +95,7 @@ void run_solver(
     if(F > 0) F = 1.0/F; // F = 1/f
     isValid = mask[base_addr + tIdx];
 
-    uint new_base_addr, new_tIdx;
+    uint32_t new_base_addr, new_tIdx;
 
     // 1-neighborhood values
     if(tx == 0) 
@@ -234,14 +234,14 @@ void run_reduction(
   sycl::nd_item<3> &item,
   const bool *__restrict con,
   bool *__restrict listVol,
-  const uint *__restrict list,
-  uint nActiveBlock)
+  const uint32_t *__restrict list,
+  uint32_t nActiveBlock)
 {
-  uint list_idx = item.get_group(1)*item.get_group_range(2) + item.get_group(2);
+  uint32_t list_idx = item.get_group(1)*item.get_group_range(2) + item.get_group(2);
 
   if(list_idx < nActiveBlock)
   {
-    uint block_idx = list[list_idx];
+    uint32_t block_idx = list[list_idx];
 
     //__shared__ bool conv[BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH];
     sycl::multi_ptr<bool[BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH],
@@ -250,19 +250,19 @@ void run_reduction(
       <bool[BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH]>(item.get_group());
     bool* conv = *localPtr;
 
-    uint blocksize = BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH/2;
-    uint base_addr = block_idx*blocksize*2;
-    uint tx = item.get_local_id(2);
-    uint ty = item.get_local_id(1);
-    uint tz = item.get_local_id(0);
-    uint tIdx = tz*BLOCK_LENGTH*BLOCK_LENGTH + ty*BLOCK_LENGTH + tx;
+    uint32_t blocksize = BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH/2;
+    uint32_t base_addr = block_idx*blocksize*2;
+    uint32_t tx = item.get_local_id(2);
+    uint32_t ty = item.get_local_id(1);
+    uint32_t tz = item.get_local_id(0);
+    uint32_t tIdx = tz*BLOCK_LENGTH*BLOCK_LENGTH + ty*BLOCK_LENGTH + tx;
 
     conv[tIdx] = con[base_addr + tIdx];
     conv[tIdx + blocksize] = con[base_addr + tIdx + blocksize];
 
     __syncthreads();
 
-    for(uint i=blocksize; i>0; i/=2)
+    for(uint32_t i=blocksize; i>0; i/=2)
     {
       if(tIdx < i)
       {
@@ -289,11 +289,11 @@ void run_check_neighbor(
   const DOUBLE *__restrict sol_in,
   DOUBLE *__restrict sol_out,
   bool *__restrict con,
-  const uint*__restrict list,
+  const uint32_t*__restrict list,
   int xdim, int ydim, int zdim,
-  uint nActiveBlock, uint nTotalBlock)
+  uint32_t nActiveBlock, uint32_t nTotalBlock)
 {
-  uint list_idx = item.get_group(1)*item.get_group_range(2) + item.get_group(2);
+  uint32_t list_idx = item.get_group(1)*item.get_group_range(2) + item.get_group(2);
 
   if(list_idx < nTotalBlock)
   {
@@ -306,14 +306,14 @@ void run_check_neighbor(
       <DOUBLE[BLOCK_LENGTH+2][BLOCK_LENGTH+2][BLOCK_LENGTH+2]>(item.get_group());
     DOUBLE (*_sol)[BLOCK_LENGTH+2][BLOCK_LENGTH+2] = *localPtr;
 
-    uint block_idx = list[list_idx];
-    uint blocksize = BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH;
-    uint base_addr = block_idx*blocksize;
+    uint32_t block_idx = list[list_idx];
+    uint32_t blocksize = BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH;
+    uint32_t base_addr = block_idx*blocksize;
 
-    uint tx = item.get_local_id(2);
-    uint ty = item.get_local_id(1);
-    uint tz = item.get_local_id(0);
-    uint tIdx = tz*BLOCK_LENGTH*BLOCK_LENGTH + ty*BLOCK_LENGTH + tx;
+    uint32_t tx = item.get_local_id(2);
+    uint32_t ty = item.get_local_id(1);
+    uint32_t tz = item.get_local_id(0);
+    uint32_t tIdx = tz*BLOCK_LENGTH*BLOCK_LENGTH + ty*BLOCK_LENGTH + tx;
 
     if(list_idx < nActiveBlock) // copy value
     {
@@ -321,15 +321,15 @@ void run_check_neighbor(
     } 
     else
     {
-      uint xgridlength = xdim/BLOCK_LENGTH;
-      uint ygridlength = ydim/BLOCK_LENGTH;
-      uint zgridlength = zdim/BLOCK_LENGTH;
+      uint32_t xgridlength = xdim/BLOCK_LENGTH;
+      uint32_t ygridlength = ydim/BLOCK_LENGTH;
+      uint32_t zgridlength = zdim/BLOCK_LENGTH;
 
       // compute block index
-      uint bx = block_idx%xgridlength;
-      uint tmpIdx = (block_idx - bx)/xgridlength;
-      uint by = tmpIdx%ygridlength;
-      uint bz = (tmpIdx-by)/ygridlength;
+      uint32_t bx = block_idx%xgridlength;
+      uint32_t tmpIdx = (block_idx - bx)/xgridlength;
+      uint32_t by = tmpIdx%ygridlength;
+      uint32_t bz = (tmpIdx-by)/ygridlength;
 
       // copy global to shared memory
       //dim3 idx(tx+1,ty+1,tz+1);
@@ -340,7 +340,7 @@ void run_check_neighbor(
       if(F > 0) F = 1.0/F;
       isValid = mask[base_addr + tIdx];
 
-      uint new_base_addr, new_tIdx;
+      uint32_t new_base_addr, new_tIdx;
 
       // 1-neighborhood values
       if(tx == 0) 

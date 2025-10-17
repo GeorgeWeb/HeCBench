@@ -29,7 +29,7 @@ typedef struct __attribute__((__aligned__(16)))
   float w;
 } float4;
 
-inline uint DivUp(uint a, uint b){
+inline uint32_t DivUp(uint32_t a, uint32_t b){
     return (a % b != 0) ? (a / b + 1) : (a / b);
 }
 

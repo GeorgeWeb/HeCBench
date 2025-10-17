@@ -116,6 +116,7 @@ int main(int argc, char **argv){
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (s)\n", (time * 1e-9f) / REPEAT);
+  fflush(stdout);
 
   q.memcpy(h_u2, d_u1, grid3D_bytes).wait();
 

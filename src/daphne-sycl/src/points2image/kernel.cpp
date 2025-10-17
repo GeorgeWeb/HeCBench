@@ -121,7 +121,7 @@ int points2image::read_number_testcases(std::ifstream& input_file)
 void  parsePointCloud(sycl::queue &q, std::ifstream& input_file, PointCloud2* pointcloud2) {
   input_file.read((char*)&(pointcloud2->height), sizeof(int));
   input_file.read((char*)&(pointcloud2->width), sizeof(int));
-  input_file.read((char*)&(pointcloud2->point_step), sizeof(uint));
+  input_file.read((char*)&(pointcloud2->point_step), sizeof(uint32_t));
 #ifdef DEBUG
   printf("PointCloud: height=%d width=%d point_step=%d\n",
           pointcloud2->height , pointcloud2->width , pointcloud2->point_step);

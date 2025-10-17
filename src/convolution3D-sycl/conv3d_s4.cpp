@@ -119,6 +119,7 @@
     time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average kernel execution time of conv3d_s4 kernel: %f (us)\n",
            (time * 1e-3f) / repeat);
+    fflush(stdout);
 
     // Read data from memory object's handle.
     read_from_dnnl_memory(Y, user_dst_mem);

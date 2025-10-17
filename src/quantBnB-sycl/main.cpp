@@ -201,6 +201,7 @@ int main(int argc, char* argv[])
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of kQuantize kernel with block size %d: %f (us)\n",
           block_size, (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(out.data(), d_out, out_size).wait();
 

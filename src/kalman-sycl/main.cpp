@@ -399,6 +399,7 @@ int main(int argc, char* argv[]) {
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average kernel execution time (n_diff = %d): %f (s)\n", n_diff, (time * 1e-9f) / repeat);
+    fflush(stdout);
     q.memcpy(F_fc, d_F_fc, fc_size).wait();
     reference<rd>(
           nseries,

@@ -184,6 +184,7 @@ int main(int argc, char* argv[])
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of gru_cell_forward: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_hy, d_hy, state_size_bytes).wait();
 

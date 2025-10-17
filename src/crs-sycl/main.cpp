@@ -212,6 +212,7 @@ int main(int argc, const char * argv[]) {
   }
 
   printf("Total encoding time %lf (s)\n", encode_time * 1e-3);
+  fflush(stdout);
 
   return 0;
 }

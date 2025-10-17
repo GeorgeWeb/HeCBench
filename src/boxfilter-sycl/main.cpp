@@ -23,7 +23,7 @@ void BoxFilterHost( unsigned int* uiInputImage, unsigned int* uiTempImage, unsig
 const unsigned int RADIUS = 10;                    // initial radius of 2D box filter mask
 const float SCALE = 1.0f/(2.0f * RADIUS + 1.0f);  // precalculated GV rescaling value
 
-inline uint DivUp(const uint a, const uint b){
+inline uint32_t DivUp(const uint32_t a, const uint32_t b){
     return (a % b != 0) ? (a / b + 1) : (a / b);
 }
 
@@ -108,7 +108,7 @@ void BoxFilterGPU ( sycl::queue &q,
               // Init summation registers to zero
               sycl::float4 f4Sum = {0.0f, 0.0f, 0.0f, 0.0f};
 
-              // Do summation, using inline function to break up uint value from LMEM into independent RGBA values
+              // Do summation, using inline function to break up uint32_t value from LMEM into independent RGBA values
               int iOffsetX = lid - iRadius;
               int iLimit = iOffsetX + (2 * iRadius) + 1;
               for(; iOffsetX < iLimit; iOffsetX++)
@@ -173,6 +173,7 @@ void BoxFilterGPU ( sycl::queue &q,
    auto end = std::chrono::steady_clock::now();
    auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
    printf("Average kernel execution time %f (us)\n", (time * 1e-3f) / iCycles);
+   fflush(stdout);
 }
 
 int main(int argc, char** argv)

@@ -400,6 +400,7 @@ void contract (sycl::queue &q, const int max_N, const int max_C, const int repea
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(value, d_value, output_size_byte).wait();
 

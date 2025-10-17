@@ -344,7 +344,7 @@ int main(int argc, char **argv) try {
       time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   }
   printf("Average kernel execution time : %f (us)\n", (time * 1e-3f) / repeat);
-
+  fflush(stdout);
 
   // copy data to host from device
   printf("> copying data from GPU memory to host memory..\n");

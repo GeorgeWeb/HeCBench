@@ -61,8 +61,7 @@ double dslash_fn(
   double copy_time = std::chrono::duration_cast<std::chrono::microseconds>(
                      Clock::now()-copy_start).count();
   if (verbose > 1) {
-    std::cout << "Time to offload input data = " << copy_time/1.0e6 << " secs\n";
-    std::cout << std::flush;
+    std::cout << "Time to offload input data = " << copy_time/1.0e6 << " secs" << std::endl << std::flush;
   }
 
   // Create backward links on the device
@@ -88,8 +87,7 @@ double dslash_fn(
   }).wait();   // end of command group
   double back_time = std::chrono::duration_cast<std::chrono::microseconds>(Clock::now()-back_start).count();
   if (verbose > 1) {
-    std::cout << "Time to create back links = " << back_time/1.0e6 << " secs\n";
-    std::cout << std::flush;
+    std::cout << "Time to create back links = " << back_time/1.0e6 << " secs" << std::endl << std::flush;
   }
 
   // Dslash benchmark loop
@@ -164,8 +162,7 @@ double dslash_fn(
 
   copy_time = std::chrono::duration_cast<std::chrono::microseconds>(Clock::now()-copy_start).count();
   if (verbose > 1) {
-    std::cout << "Time to offload backward links = " << copy_time/1.0e6 << " secs\n";
-    std::cout << std::flush;
+    std::cout << "Time to offload backward links = " << copy_time/1.0e6 << " secs" << std::endl << std::flush;
   }
 
   sycl::free(d_src, q);

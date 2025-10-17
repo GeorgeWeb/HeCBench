@@ -152,7 +152,10 @@ int main(int argc, char** argv) {
     ok = false;
   }
 
-  if (ok) printf("Average kernel execution time: %f (ms)\n", (time * 1e-6f) / repeat);
+  if (ok) {
+    printf("Average kernel execution time: %f (ms)\n", (time * 1e-6f) / repeat);
+    fflush(stdout);
+  }
 
   free(h_array);
   sycl::free(d_result, q);

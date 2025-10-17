@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Number of equations solved: " << THREADS << "\n";
   std::cout << "Average execution time of test_interval_newton: "
-            << (time * 1e-3f) / repeat << " us\n";
+            << (time * 1e-3f) / repeat << " us" << std::endl << std::flush;
 
   sycl::free(d_result, q);
   sycl::free(d_nresults, q);

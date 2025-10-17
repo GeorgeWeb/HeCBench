@@ -121,6 +121,7 @@ int main(int argc, char* argv[]) {
     time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   }
   printf("Average execution time of kernels: %f (ms)\n", (time * 1e-6f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_distance, d_distance, 2 * sizeof(float)).wait();
 

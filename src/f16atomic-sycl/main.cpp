@@ -135,6 +135,7 @@ void atomicCost (int nelems, int repeat)
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of 16-bit floating-point atomic add on global memory: %f (us)\n",
           time * 1e-3f / repeat);
+  fflush(stdout);
   free(result);
   sycl::free(d_result, q);
 }

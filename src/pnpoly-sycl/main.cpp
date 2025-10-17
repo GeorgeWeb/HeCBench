@@ -74,6 +74,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pnpoly_base): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(bitmap_ref, d_bitmap_ref, nPoints*sizeof(int)).wait();
 
@@ -92,6 +93,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pnpoly_opt<1>): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
 
@@ -107,6 +109,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pnpoly_opt<2>): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
 
@@ -122,6 +125,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pnpoly_opt<4>): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
 
@@ -152,6 +156,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pnpoly_opt<16>): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
 
@@ -167,6 +172,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pnpoly_opt<32>): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
 
@@ -182,6 +188,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pnpoly_opt<64>): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(bitmap_opt, d_bitmap_opt, nPoints*sizeof(int)).wait();
 

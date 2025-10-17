@@ -5,11 +5,11 @@
 
 
 typedef struct {
-  uint n[10];
+  uint32_t n[10];
 } secp256k1_fe;
 
 typedef struct {
-  uint n[8];
+  uint32_t n[8];
 } secp256k1_fe_storage;
 
 typedef struct {
@@ -45,11 +45,11 @@ void secp256k1_fe_from_storage(secp256k1_fe *r, const secp256k1_fe_storage *a) {
   r->n[9] = a->n[7] >> 10;
 }
 
-void secp256k1_fe_sqr_inner(uint *r, const uint *a) {
+void secp256k1_fe_sqr_inner(uint32_t *r, const uint32_t *a) {
   ulong c, d;
   ulong u0, u1, u2, u3, u4, u5, u6, u7, u8;
-  uint t9, t0, t1, t2, t3, t4, t5, t6, t7;
-  const uint M = 0x3FFFFFFUL, R0 = 0x3D10UL, R1 = 0x400UL;
+  uint32_t t9, t0, t1, t2, t3, t4, t5, t6, t7;
+  const uint32_t M = 0x3FFFFFFUL, R0 = 0x3D10UL, R1 = 0x400UL;
 
   d  = (ulong)(a[0]*2) * a[9]
     + (ulong)(a[1]*2) * a[8]
@@ -145,11 +145,11 @@ void secp256k1_fe_sqr(secp256k1_fe *r, const secp256k1_fe *a) {
 }
 
 void secp256k1_fe_normalize_weak(secp256k1_fe *r) {
-  uint t0 = r->n[0], t1 = r->n[1], t2 = r->n[2], t3 = r->n[3], t4 = r->n[4],
+  uint32_t t0 = r->n[0], t1 = r->n[1], t2 = r->n[2], t3 = r->n[3], t4 = r->n[4],
      t5 = r->n[5], t6 = r->n[6], t7 = r->n[7], t8 = r->n[8], t9 = r->n[9];
 
   /* Reduce t9 at the start so there will be at most a single carry from the first pass */
-  uint x = t9 >> 22; t9 &= 0x03FFFFFUL;
+  uint32_t x = t9 >> 22; t9 &= 0x03FFFFFUL;
 
   /* The first pass ensures the magnitude is 1, ... */
   t0 += x * 0x3D1UL; t1 += (x << 6);
@@ -167,11 +167,11 @@ void secp256k1_fe_normalize_weak(secp256k1_fe *r) {
   r->n[5] = t5; r->n[6] = t6; r->n[7] = t7; r->n[8] = t8; r->n[9] = t9;
 }
 
-void secp256k1_fe_mul_inner(uint *r, const uint *a, const uint * b) {
+void secp256k1_fe_mul_inner(uint32_t *r, const uint32_t *a, const uint32_t * b) {
   ulong c, d;
   ulong u0, u1, u2, u3, u4, u5, u6, u7, u8;
-  uint t9, t1, t0, t2, t3, t4, t5, t6, t7;
-  const uint M = 0x3FFFFFFUL, R0 = 0x3D10UL, R1 = 0x400UL;
+  uint32_t t9, t1, t0, t2, t3, t4, t5, t6, t7;
+  const uint32_t M = 0x3FFFFFFUL, R0 = 0x3D10UL, R1 = 0x400UL;
   d  = (ulong)a[0] * b[9]
     + (ulong)a[1] * b[8]
     + (ulong)a[2] * b[7]
@@ -446,20 +446,20 @@ int secp256k1_fe_is_odd(const secp256k1_fe *a) {
 }
 
 void secp256k1_fe_normalize_var(secp256k1_fe *r) {
-  uint t0 = r->n[0];
-  uint t1 = r->n[1];
-  uint t2 = r->n[2];
-  uint t3 = r->n[3];
-  uint t4 = r->n[4];
-  uint t5 = r->n[5];
-  uint t6 = r->n[6];
-  uint t7 = r->n[7];
-  uint t8 = r->n[8];
-  uint t9 = r->n[9];
+  uint32_t t0 = r->n[0];
+  uint32_t t1 = r->n[1];
+  uint32_t t2 = r->n[2];
+  uint32_t t3 = r->n[3];
+  uint32_t t4 = r->n[4];
+  uint32_t t5 = r->n[5];
+  uint32_t t6 = r->n[6];
+  uint32_t t7 = r->n[7];
+  uint32_t t8 = r->n[8];
+  uint32_t t9 = r->n[9];
 
   /* Reduce t9 at the start so there will be at most a single carry from the first pass */
-  uint m;
-  uint x = t9 >> 22; t9 &= 0x03FFFFFUL;
+  uint32_t m;
+  uint32_t x = t9 >> 22; t9 &= 0x03FFFFFUL;
 
   /* The first pass ensures the magnitude is 1, ... */
   t0 += x * 0x3D1UL; t1 += (x << 6);
@@ -1222,7 +1222,7 @@ int main(int argc, char **argv) {
         secp256k1_gej_set_ge(&sum, &ge[0]);
         secp256k1_fe z_all = sum.z;
 
-        for (uint i=1; i<512; ++i) {
+        for (uint32_t i=1; i<512; ++i) {
           secp256k1_ge_from_storage(&ge[i], d_prec+i);
           secp256k1_gej_add_ge_var(&sum, &sum, &ge[i], 0);
           secp256k1_fe_mul(&z_all, &z_all, &sum.z);
@@ -1237,6 +1237,7 @@ int main(int argc, char **argv) {
   auto end = std::chrono::steady_clock::now();
   float time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
   
   q.memcpy(output, d_output, 32).wait();
   sycl::free(d_prec, q);

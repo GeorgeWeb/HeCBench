@@ -21,7 +21,7 @@ void md (
   const FPTYPE lj2_t,
   const FPTYPE cutsq_t )
 {
-  const uint idx = item.get_global_id(0);
+  const uint32_t idx = item.get_global_id(0);
   if (idx >= nAtom) return;
 
   POSVECTYPE ipos = position[idx];
@@ -161,7 +161,7 @@ int main(int argc, char** argv)
   q.wait();
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-  std::cout << "Average kernel execution time " << (time * 1e-9f) / iteration << " (s)\n";
+  std::cout << "Average kernel execution time " << (time * 1e-9f) / iteration << " (s)" << std::endl << std::flush;
 
   sycl::free(d_position, q);
   sycl::free(d_force, q);

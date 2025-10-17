@@ -18,7 +18,7 @@ enum {
 
 //coordinate is c, r for compatibility with climage and CUDA
 INLINE uint2 tex2D(const int rows, const int cols, const int _c, const int _r,
-                   const uint sample_method) {
+                   const uint32_t sample_method) {
   int c = _c;
   int r = _r;
   if (sample_method == ADDRESS_REFLECT_BORDER_EXCLUSIVE) {
@@ -49,23 +49,23 @@ INLINE uint2 tex2D(const int rows, const int cols, const int _c, const int _r,
   return result;
 }
 
-INLINE uchar* image_line_at_(uchar *im_p, const uint im_rows, const uint im_cols, const uint image_pitch_p, const uint r) {
+INLINE uchar* image_line_at_(uchar *im_p, const uint32_t im_rows, const uint32_t im_cols, const uint32_t image_pitch_p, const uint32_t r) {
   assert_val(r >= 0 && r < im_rows, r);
   (void) im_cols;
   return im_p + r * image_pitch_p;
 }
 #define image_line_at(PixelT, im_p, im_rows, im_cols, image_pitch, r) ((PixelT *) image_line_at_((uchar *) (im_p), (im_rows), (im_cols), (image_pitch), (r)))
 
-INLINE uchar* image_pixel_at_(uchar *im_p, const uint im_rows, const uint im_cols, const uint image_pitch_p,
-                              const uint r, const uint c, const uint sizeof_pixel) {
+INLINE uchar* image_pixel_at_(uchar *im_p, const uint32_t im_rows, const uint32_t im_cols, const uint32_t image_pitch_p,
+                              const uint32_t r, const uint32_t c, const uint32_t sizeof_pixel) {
   assert_val(r >= 0 && r < im_rows, r);
   assert_val(c >= 0 && c < im_cols, c);
   return im_p + r * image_pitch_p + c * sizeof_pixel;
 }
 #define image_pixel_at(PixelT, im_p, im_rows, im_cols, image_pitch, r, c) (*((PixelT *) image_pixel_at_((uchar *)(im_p), (im_rows), (im_cols), (image_pitch), (r), (c), sizeof(PixelT))))
 
-INLINE uchar* image_tex2D_(uchar *im_p, const uint im_rows, const uint im_cols, const uint image_pitch,
-                                 const int r, const int c, const uint sizeof_pixel, const uint sample_method) {
+INLINE uchar* image_tex2D_(uchar *im_p, const uint32_t im_rows, const uint32_t im_cols, const uint32_t image_pitch,
+                                 const int r, const int c, const uint32_t sizeof_pixel, const uint32_t sample_method) {
   const uint2 p2 = tex2D((int) im_rows, (int) im_cols, c, r, sample_method);
   return image_pixel_at_(im_p, im_rows, im_cols, image_pitch, p2.s0(), p2.s1(), sizeof_pixel);
 }

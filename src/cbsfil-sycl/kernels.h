@@ -9,16 +9,16 @@
 
 float InitialCausalCoefficient(
     float* c,         // coefficients
-    uint DataLength,  // number of coefficients
+    uint32_t DataLength,  // number of coefficients
     int step)         // element interleave in bytes
 {
-  const uint Horizon = 12 < DataLength ? 12 : DataLength;
+  const uint32_t Horizon = 12 < DataLength ? 12 : DataLength;
 
   // this initialization corresponds to clamping boundaries
   // accelerated loop
   float zn = POLE;
   float Sum = *c;
-  for (uint n = 0; n < Horizon; n++) {
+  for (uint32_t n = 0; n < Horizon; n++) {
     Sum += zn * *c;
     zn *= POLE;
     c = (float*)((sycl::uchar*)c + step);
@@ -28,7 +28,7 @@ float InitialCausalCoefficient(
 
 float InitialAntiCausalCoefficient(
     float* c,         // last coefficient
-    uint DataLength,  // number of samples or coefficients
+    uint32_t DataLength,  // number of samples or coefficients
     int step)         // element interleave in bytes
 {
   // this initialization corresponds to clamping boundaries
@@ -37,7 +37,7 @@ float InitialAntiCausalCoefficient(
 
 void ConvertToInterpolationCoefficients(
     float* coeffs,    // input samples --> output coefficients
-    uint DataLength,  // number of samples or coefficients
+    uint32_t DataLength,  // number of samples or coefficients
     int step)         // element interleave in bytes
 {
   // compute the overall gain
@@ -48,7 +48,7 @@ void ConvertToInterpolationCoefficients(
   float previous_c;  //cache the previously calculated c rather than look it up again (faster!)
   *c = previous_c = Lambda * InitialCausalCoefficient(c, DataLength, step);
   // causal recursion
-  for (uint n = 1; n < DataLength; n++) {
+  for (uint32_t n = 1; n < DataLength; n++) {
     c = (float*)((sycl::uchar*)c + step);
     *c = previous_c = Lambda * *c + POLE * previous_c;
   }
@@ -64,12 +64,12 @@ void ConvertToInterpolationCoefficients(
 void toCoef2DX(
     sycl::nd_item<1> &item,
     float* image,
-    uint pitch,
-    uint width,
-    uint height)
+    uint32_t pitch,
+    uint32_t width,
+    uint32_t height)
 {
   // process lines horizontally
-  const uint y = item.get_global_id(0);
+  const uint32_t y = item.get_global_id(0);
   if (y < height) {
     float* line = (float*)((sycl::uchar*)image + y * pitch);  //direct access
     ConvertToInterpolationCoefficients(line, width, sizeof(float));
@@ -79,12 +79,12 @@ void toCoef2DX(
 void toCoef2DY(
     sycl::nd_item<1> &item,
     float* image,
-    uint pitch,
-    uint width,
-    uint height)
+    uint32_t pitch,
+    uint32_t width,
+    uint32_t height)
 {
   // process lines vertically
-  const uint x = item.get_global_id(0);
+  const uint32_t x = item.get_global_id(0);
   if (x < width) {
     float* line = image + x;  //direct access
     ConvertToInterpolationCoefficients(line, height, pitch);

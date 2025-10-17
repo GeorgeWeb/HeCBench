@@ -111,7 +111,7 @@ void degridGPU(CmplxType* out, CmplxType* in, CmplxType *img, CmplxType *gcf) {
   q.wait();
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-  std::cout << "Average kernel execution time " << (time * 1e-9f) / REPEAT << " (s)\n";
+  std::cout << "Average kernel execution time " << (time * 1e-9f) / REPEAT << " (s)" << std::endl << std::flush;
 
   q.memcpy(out, d_out, sizeof(CmplxType) * NPOINTS).wait();
   sycl::free(d_img, q);

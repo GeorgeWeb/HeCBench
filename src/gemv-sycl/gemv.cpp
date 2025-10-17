@@ -54,6 +54,7 @@ SimpleTensor<sycl::half> solve_gemv_int4_quantized_with_params(
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   return result;
 }
@@ -106,6 +107,7 @@ SimpleTensor<sycl::half> solve_gemv_int8_quantized_with_params(
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   return result;
 }
@@ -150,6 +152,7 @@ solve_gemv_with_params(sycl::queue &q,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   return result;
 }

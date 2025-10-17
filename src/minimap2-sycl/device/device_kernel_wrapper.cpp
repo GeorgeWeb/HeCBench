@@ -78,6 +78,7 @@ void device_chain_kernel_wrapper(
   auto k_end = std::chrono::steady_clock::now();
   auto k_time = std::chrono::duration_cast<std::chrono::nanoseconds>(k_end - k_start).count();
   printf("Total kernel execution time: %f (s)\n", k_time * 1e-9);
+  fflush(stdout);
 
   q.memcpy(h_ret, d_ret, batch_count * TILE_SIZE * PE_NUM * sizeof(return_dt));
 

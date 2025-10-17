@@ -97,7 +97,9 @@ int main(int argc, char** argv)
   auto end = get_time();
 
   printf("Total kernel execution time: %.2f s\n", ktime / 1e6f);
+  fflush(stdout);
   printf("Total device execution time: %.2f s\n", (end - start) / 1e6f);
+  fflush(stdout);
 
   compute_statistics();
 

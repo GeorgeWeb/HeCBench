@@ -246,6 +246,7 @@ int main(int argc, char* argv[])
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the cast intrinsics kernel (from FP): %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(output1, d_output1, output1_size_bytes).wait();
 
@@ -269,6 +270,7 @@ int main(int argc, char* argv[])
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the cast intrinsics kernel (to FP): %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(output2, d_output2, output2_size_bytes).wait();
 

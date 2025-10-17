@@ -47,5 +47,5 @@ void bs4 (sycl::queue &q,
   q.wait();
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-  std::cout << "Average kernel execution time (bs4) " << (time * 1e-9f) / repeat << " (s)\n";
+  std::cout << "Average kernel execution time (bs4) " << (time * 1e-9f) / repeat << " (s)" << std::endl << std::flush;
 }

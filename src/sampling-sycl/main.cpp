@@ -227,6 +227,7 @@ int main( int argc, char** argv)
       sycl::free(d_d, q);
     }
     printf("Average execution time of kernels: %f (us)\n", (time * 1e-3) / repeat);
+    fflush(stdout);
   }
 
   return 0;

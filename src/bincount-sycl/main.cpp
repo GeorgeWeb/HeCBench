@@ -120,7 +120,7 @@ void bincount (
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count(); \
   printf("Average execution time of bincount kernel: %f (us)\n",     \
          (time * 1e-3f) / repeat)
-
+  fflush(stdout);
 #define HANDLE_SWITCH_CASE(mType)                           \
   switch (mType) {                                          \
     case DeviceMemoryType::SHARED: {                        \

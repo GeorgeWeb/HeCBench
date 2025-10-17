@@ -338,6 +338,7 @@ int main(int argc, char* argv[]) {
   }
 
   printf("Average kernel execution time: %f (s)\n", (time * 1e-9f) / numRuns);
+  fflush(stdout);
   printf("i checksum %E     ", cs.i);
   printf("c checksum %E     ", cs.c);
   printf("h checksum %E\n", cs.h);

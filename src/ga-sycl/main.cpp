@@ -23,7 +23,7 @@ void ga(sycl::nd_item<1> &item,
               int coarse_match_threshold,
               int current_position)
 {
-  uint tid = item.get_global_id(0);
+  uint32_t tid = item.get_global_id(0);
   if (tid > length) return;
   bool match = false;
   const int max_length = query_sequence_length - coarse_match_length;
@@ -132,6 +132,7 @@ int main(int argc, char* argv[])
     current_position = end_position;
   }
   printf("Total kernel execution time %f (s)\n", total_time * 1e-9f);
+  fflush(stdout);
   printf("%s\n", error ? "FAIL" : "PASS");
 
   sycl::free(d_target, q);

@@ -673,6 +673,7 @@ void backprojectionDDb(
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time %f (s)\n", time * 1e-9f);
+  fflush(stdout);
 
   q.memcpy(h_pVolume, d_pVolume, nSlices* nPixX * nPixY * sizeof(double));
 

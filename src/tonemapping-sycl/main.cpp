@@ -1,10 +1,10 @@
 /**********************************************************************
-  Copyright ©2013 Advanced Micro Devices, Inc. All rights reserved.
+  Copyright ï¿½2013 Advanced Micro Devices, Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-  •   Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-  •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
+  ï¿½   Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+  ï¿½   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
   other materials provided with the distribution.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -31,9 +31,9 @@ double runKernels(
     const float gamma,
     const float c,
     const float delta,
-    const uint width,
-    const uint numChannels,
-    const uint height)
+    const uint32_t width,
+    const uint32_t numChannels,
+    const uint32_t height)
 {
   q.memcpy(inputImageBuffer, input, sizeof(float) * width * height * numChannels);
 
@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
   const float cPattanaik = 0.25f;
   const float gammaPattanaik = 0.4f;
   const float deltaPattanaik = 0.000002f;
-  const uint numChannels = 4;
-  uint width;
-  uint height;
+  const uint32_t numChannels = 4;
+  uint32_t width;
+  uint32_t height;
   float averageLuminance = 0.0f;
 
   inputFile >> width;
@@ -174,6 +174,7 @@ int main(int argc, char *argv[])
   }
 
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / iterations);
+  fflush(stdout);
 
   // VerifyResults
   float *referenceOutput = (float*) malloc (sizeof(float) * height * width * numChannels);

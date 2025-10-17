@@ -226,6 +226,7 @@ int main(int argc, char **argv) {
   }
 
   printf("Average kernel execution time %f (s)\n", (total_time * 1e-9f) / 10.f);
+  fflush(stdout);
 
   q.memcpy(achtemp_re, d_achtemp_re, achtemp_re_size * sizeof(dataType));
   q.memcpy(achtemp_im, d_achtemp_im, achtemp_im_size * sizeof(dataType));

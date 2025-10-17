@@ -295,6 +295,7 @@ int main(int argc, char ** argv) {
     total_time += time;
   }
   printf("Total kernel execution time %lf (s)\n", total_time * 1e-9);
+  fflush(stdout);
 
   q.memcpy(walkers_vals, d_walkers_vals, sizeof(float)*WSIZE*NSIZE);
   q.memcpy(walkers_grads, d_walkers_grads, sizeof(float)*WSIZE*MSIZE);

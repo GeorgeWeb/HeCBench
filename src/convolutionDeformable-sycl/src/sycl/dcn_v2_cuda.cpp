@@ -210,6 +210,7 @@ std::vector<at::Tensor> dcn_v2_cuda_backward(const at::Tensor &input,
         grad_bias = at::add(grad_bias, product);
     }
     printf("Total kernel execution time in the backward phase: %lf (ms)\n", total_time * 1.0 / 1e6);
+    fflush(stdout);
 
     return {
         grad_input, grad_offset, grad_mask, grad_weight, grad_bias

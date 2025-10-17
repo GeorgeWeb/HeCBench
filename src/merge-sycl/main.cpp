@@ -147,6 +147,7 @@ void mergeType(sycl::queue &q, const uint64_t size, const uint32_t runs) {
 
   if (timing)
     printf("Average kernel execution time: %f (us).\n", (total_time * 1e-3f) / runs);
+    fflush(stdout);
   else
     printf("Warmup run\n");
 }

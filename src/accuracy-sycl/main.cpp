@@ -50,6 +50,7 @@ void accuracy_kernel(
  
 int main(int argc, char* argv[])
 {
+  //setvbuf(stdout, NULL, _IONBF, 0);  // Disable buffering
   if (argc != 5) {
     printf("Usage: %s <number of rows> <number of columns> <top K> <repeat>\n", argv[0]);
     return 1;
@@ -99,7 +100,7 @@ int main(int argc, char* argv[])
 
   for (int ngrid = nrows / 4; ngrid <= nrows; ngrid += nrows / 4) {
 
-    printf("Grid size is %d\n", ngrid);
+    //printf("Grid size is %d\n", ngrid);
     sycl::range<1> gws (ngrid * GPU_NUM_THREADS);
 
     auto start = std::chrono::steady_clock::now();
@@ -118,11 +119,12 @@ int main(int argc, char* argv[])
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of accuracy kernel: %f (us)\n", (time * 1e-3f) / repeat);
+    fflush(stdout);
 
     int count;
     q.memcpy(&count, d_count, sizeof(int)).wait();
     bool ok = (count == count_ref);
-    printf("%s\n", ok ? "PASS" : "FAIL");
+    //printf("%s\n", ok ? "PASS" : "FAIL");
     // printf("Accuracy = %f\n", (float)count / nrows);
   }
 

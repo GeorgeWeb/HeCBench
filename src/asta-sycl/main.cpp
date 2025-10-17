@@ -294,6 +294,7 @@ int main(int argc, char **argv) {
   }
 
   printf("Average kernel execution time %lf (s)\n", (time * 1e-9) / p.n_reps);
+  fflush(stdout);
 
   // Verify
   int status = verify(h_in_out, h_in_backup, tiled_n * p.s, p.m, p.s);

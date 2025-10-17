@@ -24,9 +24,9 @@ main(int argc, char** argv)
             << "\t\t" << std::setw(15) << "total" << std::endl;
 
 #ifdef DEBUG
-  for (uint dim = 256; dim <= 256; dim <<= 1) {
+  for (uint32_t dim = 256; dim <= 256; dim <<= 1) {
 #else
-  for (uint dim = (1ul << 20); dim <= (1ul << 24); dim <<= 1) {
+  for (uint32_t dim = (1ul << 20); dim <= (1ul << 24); dim <<= 1) {
 #endif
     // time in nanoseconds --- beware !
     double tm = 0;

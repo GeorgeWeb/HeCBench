@@ -269,8 +269,8 @@ int main(int argc, char* argv[]) {
   q.wait();
   auto kend = std::chrono::steady_clock::now();
   auto ktime = std::chrono::duration_cast<std::chrono::nanoseconds>(kend - kstart).count();
-  std::cout << "Total kernel execution time " << ktime * 1e-6f << " (ms)\n";
-  std::cout << "Average kernel execution time " << (ktime * 1e-3f) / nIterations << " (us)\n";
+  std::cout << "Total kernel execution time " << ktime * 1e-6f << " (ms)" << std::endl << std::flush;
+  std::cout << "Average kernel execution time " << (ktime * 1e-3f) / nIterations << " (us)" << std::endl << std::flush;
 
   q.memcpy(next_base, d_next, sizeof(float)*nsize).wait();
 

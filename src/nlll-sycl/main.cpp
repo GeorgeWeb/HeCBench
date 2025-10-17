@@ -137,6 +137,7 @@ void eval(const int64_t nframe,
   printf("\nThread block size: %d\n", GPU_THREADS);
   printf("Average execution time of nll loss forward kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(&h_output, d_output, output_size_bytes);
   q.memcpy(&h_total_weight, d_total_weight, output_size_bytes);

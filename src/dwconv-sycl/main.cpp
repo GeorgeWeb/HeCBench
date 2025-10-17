@@ -232,6 +232,7 @@ void dwconv2d_forward (sycl::queue &q,
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of dwconv2d_forward kernel: %f (ms)\n", 
           time * 1e-6f / repeat);
+  fflush(stdout);
 
   q.memcpy(h_output, d_output, output_size_bytes).wait();
 

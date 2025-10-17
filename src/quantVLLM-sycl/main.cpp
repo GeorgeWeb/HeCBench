@@ -239,6 +239,7 @@ void quant(sycl::queue &q, int num_tokens, int hidden_size, int repeat) {
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of static_scaled_int8_quant kernel: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(h_output, d_output, output_size_bytes).wait();
   static_scaled_int8_quant_reference(h_input, h_output_r, scale, num_tokens, hidden_size);
   error = memcmp(h_output, h_output_r, output_size_bytes);
@@ -253,6 +254,7 @@ void quant(sycl::queue &q, int num_tokens, int hidden_size, int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of static_scaled_int8_quant_azp kernel: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(h_output, d_output, output_size_bytes).wait();
   static_scaled_int8_azp_quant_reference(h_input, h_output_r, scale, azp, num_tokens, hidden_size);
   error += memcmp(h_output, h_output_r, output_size_bytes);
@@ -266,6 +268,7 @@ void quant(sycl::queue &q, int num_tokens, int hidden_size, int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of dynamic_scaled_int8_quant kernel: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(h_output, d_output, output_size_bytes).wait();
   dynamic_scaled_int8_quant_reference(h_input, h_output_r, h_scale, num_tokens, hidden_size);
   error += memcmp(h_output, h_output_r, output_size_bytes);
@@ -280,6 +283,7 @@ void quant(sycl::queue &q, int num_tokens, int hidden_size, int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of dynamic_scaled_int8_quant_azp kernel: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(h_output, d_output, output_size_bytes).wait();
   dynamic_scaled_int8_azp_quant_reference(h_input, h_output_r, h_scale, h_azp, num_tokens, hidden_size);
   error += memcmp(h_output, h_output_r, output_size_bytes);

@@ -151,9 +151,9 @@ void relu_impl1(int count, const int* input, int* output,
     b.z() = (input[index] >> 16) & 0xFF;
     b.w() = (input[index] >> 24) & 0xFF;
     b = sycl::max(b, zero);
-    output[index] = (uint)b.w() << 24 |
-                    (uint)b.z() << 16 |
-                    (uint)b.y() <<  8 | b.x();
+    output[index] = (uint32_t)b.w() << 24 |
+                    (uint32_t)b.z() << 16 |
+                    (uint32_t)b.y() <<  8 | b.x();
   }
 }
 
@@ -253,6 +253,7 @@ int main(int argc, char* argv[])
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of ReluGrad_impl1 Kernel: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_backprop, d_backprop, size).wait();
 
@@ -289,6 +290,7 @@ int main(int argc, char* argv[])
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of ReluGrad_impl2 Kernel: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_backprop, d_backprop, size).wait();
 
@@ -346,6 +348,7 @@ int main(int argc, char* argv[])
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of Relu_impl1 Kernel: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_out, d_out, size).wait();
 
@@ -368,6 +371,7 @@ int main(int argc, char* argv[])
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of Relu_impl2 Kernel: %f (us)\n",
           (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_out, d_out, size).wait();
 

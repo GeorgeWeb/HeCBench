@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
     total_time += time;
   }
   printf("Average device execution time %f (s)\n", (total_time * 1e-9f) / repeat);
+  fflush(stdout);
 
   printf("Reading back GPU results...\n");
   q.memcpy(h_ResultGPU, d_Data, DATA_SIZE).wait();

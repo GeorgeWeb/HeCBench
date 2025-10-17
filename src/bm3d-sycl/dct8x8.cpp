@@ -151,7 +151,7 @@ void DCT2D8x8(sycl::nd_item<2> &item,
               float *__restrict block, 
               float *__restrict dst,
               const float *__restrict src,
-              const uint size)
+              const uint32_t size)
 {
   const int lidx = item.get_local_id(1);
   const int lidy = item.get_local_id(0);
@@ -207,7 +207,7 @@ void IDCT2D8x8(sycl::nd_item<2> &item,
                float *__restrict block, 
                float *__restrict dst,
                const float *__restrict src,
-               const uint size)
+               const uint32_t size)
 {
   const int lidx = item.get_local_id(1);
   const int lidy = item.get_local_id(0);
@@ -244,7 +244,7 @@ void run_DCT2D8x8(
   sycl::queue &q,
   float *transformed_stacks,
   float *gathered_stacks,
-  const uint size,
+  const uint32_t size,
   const sycl::range<2> lws,  
   const sycl::range<2> gws)
 {
@@ -263,7 +263,7 @@ void run_IDCT2D8x8(
   sycl::queue &q,
   float *gathered_stacks,
   float *transformed_stacks,
-  const uint size,
+  const uint32_t size,
   const sycl::range<2> lws,  
   const sycl::range<2> gws)
 {

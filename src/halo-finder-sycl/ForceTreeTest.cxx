@@ -22,6 +22,8 @@
 #include <RCBForceTree.h>
 #include <Partition.h>
 
+#include "Utility.h"
+
 #include <fenv.h>
 #if defined(__i386__) && defined(__SSE__)
 #include <xmmintrin.h>

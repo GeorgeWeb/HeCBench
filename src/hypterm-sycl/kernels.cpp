@@ -235,8 +235,11 @@ extern "C" void offload (double *h_flux_0, double *h_flux_1, double *h_flux_2, d
   }
 
   printf("Average kernel execution time (k1): %f (ms)\n", t1 * 1e-6 / repeat);
+  fflush(stdout);
   printf("Average kernel execution time (k2): %f (ms)\n", t2 * 1e-6 / repeat);
+  fflush(stdout);
   printf("Average kernel execution time (k3): %f (ms)\n", t3 * 1e-6 / repeat);
+  fflush(stdout);
 
   q.memcpy (h_flux_0, flux_0, vol_size);
   q.memcpy (h_flux_1, flux_1, vol_size);

@@ -71,16 +71,16 @@ void StructuredEikonal::init_device_mem() {
   this->memoryStruct_.xdim = static_cast<int>(nx);
   this->memoryStruct_.ydim = static_cast<int>(ny);
   this->memoryStruct_.zdim = static_cast<int>(nz);
-  this->memoryStruct_.volsize = static_cast<uint>(volSize);
-  this->memoryStruct_.blksize = static_cast<uint>(blkSize);
+  this->memoryStruct_.volsize = static_cast<uint32_t>(volSize);
+  this->memoryStruct_.blksize = static_cast<uint32_t>(blkSize);
   this->memoryStruct_.blklength = BLOCK_LENGTH;
-  this->memoryStruct_.blknum = static_cast<uint>(blockNum);
+  this->memoryStruct_.blknum = static_cast<uint32_t>(blockNum);
   this->memoryStruct_.nIter = static_cast<int>(this->itersPerBlock_); // iter per block
 
   if(this->isGpuMemCreated_) // delete previous memory
   {
     free((DOUBLE*)this->memoryStruct_.h_sol);
-    free((uint*)this->memoryStruct_.h_list);
+    free((uint32_t*)this->memoryStruct_.h_list);
     free((bool*)this->memoryStruct_.h_listed);
     free((bool*)this->memoryStruct_.h_listVol);
     free((int*)this->memoryStruct_.blockOrder);
@@ -95,7 +95,7 @@ void StructuredEikonal::init_device_mem() {
   this->isGpuMemCreated_ = true;
 
   this->memoryStruct_.h_sol = (DOUBLE*) malloc(volSize*sizeof(DOUBLE)); // initial solution
-  this->memoryStruct_.h_list = (uint*) malloc(blockNum*sizeof(uint)); // linear list contains active block indices
+  this->memoryStruct_.h_list = (uint32_t*) malloc(blockNum*sizeof(uint32_t)); // linear list contains active block indices
   this->memoryStruct_.h_listed = (bool*) malloc(blockNum*sizeof(bool));  // whether block is added to the list
   this->memoryStruct_.h_listVol = (bool*) malloc(blockNum*sizeof(bool)); // volume list shows active/nonactive of corresponding block
   this->memoryStruct_.blockOrder = (int*) malloc(blockNum*sizeof(int));
@@ -111,7 +111,7 @@ void StructuredEikonal::init_device_mem() {
 
   this->memoryStruct_.d_con = sycl::malloc_device<bool>(volSize, q);  // convergence volume
 
-  this->memoryStruct_.d_list = sycl::malloc_device<uint>(blockNum, q);
+  this->memoryStruct_.d_list = sycl::malloc_device<uint32_t>(blockNum, q);
 
   this->memoryStruct_.d_listVol = sycl::malloc_device<bool>(blockNum, q);
 
@@ -119,7 +119,7 @@ void StructuredEikonal::init_device_mem() {
 }
 
 void StructuredEikonal::set_attribute_mask() {
-  uint volSize = this->memoryStruct_.volsize;
+  uint32_t volSize = this->memoryStruct_.volsize;
 
   int nx, ny, nz, blklength;
 
@@ -134,7 +134,7 @@ void StructuredEikonal::set_attribute_mask() {
 
   // copy input volume to host memory
   // make each block to be stored contiguously in 1D memory space
-  uint idx = 0;
+  uint32_t idx = 0;
   for(int zStr = 0; zStr < nz; zStr += blklength) {
     for(int yStr = 0; yStr < ny; yStr += blklength) {
       for(int xStr = 0; xStr < nx; xStr += blklength) {
@@ -199,7 +199,7 @@ void StructuredEikonal::useSeeds() {
   if (this->verbose_) {
     std::cout << "Loading seed volume..." << std::endl;
   }
-  uint volSize, blockNum;
+  uint32_t volSize, blockNum;
   int nx, ny, nz, blklength;
 
   nx = this->memoryStruct_.xdim;
@@ -211,10 +211,10 @@ void StructuredEikonal::useSeeds() {
 
   // copy input volume to host memory
   // make each block to be stored contiguously in 1D memory space
-  uint idx = 0;
-  uint blk_idx = 0;
-  uint list_idx = 0;
-  uint nActiveBlock = 0;
+  uint32_t idx = 0;
+  uint32_t blk_idx = 0;
+  uint32_t list_idx = 0;
+  uint32_t nActiveBlock = 0;
 
   for(int zStr = 0; zStr < nz; zStr += blklength) {
     for(int yStr = 0; yStr < ny; yStr += blklength) {
@@ -273,7 +273,7 @@ void StructuredEikonal::useSeeds() {
   // initialize GPU memory with host memory
   q.memcpy(this->memoryStruct_.d_sol, this->memoryStruct_.h_sol, volSize*sizeof(DOUBLE));
   q.memcpy(this->memoryStruct_.t_sol, this->memoryStruct_.h_sol, volSize*sizeof(DOUBLE));
-  q.memcpy(this->memoryStruct_.d_list, this->memoryStruct_.h_list, nActiveBlock*sizeof(uint));
+  q.memcpy(this->memoryStruct_.d_list, this->memoryStruct_.h_list, nActiveBlock*sizeof(uint32_t));
   q.memcpy(this->memoryStruct_.d_listVol, this->memoryStruct_.h_listVol, blockNum*sizeof(bool));
   // initialize GPU memory with constant value
   q.memset(this->memoryStruct_.d_con, 1, volSize*sizeof(bool));

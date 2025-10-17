@@ -600,6 +600,7 @@ int main(int argc, char* argv[])
   printf("Triangles Size: %u\n", countedBlockNumLv2 * 315 * 3);
   printf("Vertices: %u\nTriangles: %u\n", countedVerticesNum, countedTrianglesNum);
   printf("Average kernel execution time (generatingTriangles): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   // specific to the problem size
   bool ok = (countedBlockNumLv1 == 8296 && countedBlockNumLv2 == 240380 &&

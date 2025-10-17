@@ -11,6 +11,6 @@ extern const float vmax;
 extern const float cfl;
 
 typedef long long int llint;
-typedef unsigned int uint;
+typedef unsigned int uint32_t;
 
 #endif

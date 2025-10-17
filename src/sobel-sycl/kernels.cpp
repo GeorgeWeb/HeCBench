@@ -1,5 +1,5 @@
 /**********************************************************************
-  Copyright ©2013 Advanced Micro Devices, Inc. All rights reserved.
+  Copyright ï¿½2013 Advanced Micro Devices, Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
@@ -44,12 +44,12 @@ inline uchar4 convert_uchar4(float4 v) {
 
 void sobel_filter(const uchar4*__restrict inputImage, 
                         uchar4*__restrict outputImage, 
-                  const uint width,
-                  const uint height,
+                  const uint32_t width,
+                  const uint32_t height,
                   sycl::nd_item<2> &item)
 {
-  uint x = item.get_global_id(1);
-  uint y = item.get_global_id(0);
+  uint32_t x = item.get_global_id(1);
+  uint32_t y = item.get_global_id(0);
 
   /* Read each texel component and calculate the filtered value using neighbouring texel components */
   if( x >= 1 && x < (width-1) && y >= 1 && y < height - 1)

@@ -790,12 +790,14 @@ void SNICIT::_infer() {
   });
   CHECK_ERROR(q.wait());
 
-  std::cout<<"SNICIT info: accuracy "<<100*((float)cnt[0]/(float)num_input)<<"%"<<" runtime "<< sparse_duration/1000.0<< "ms"
-  <<" avgpost "<<post_duration/(1000*(num_layers-threshold))<< "ms"<<std::endl;
+  std::cout << "SNICIT info: accuracy " << 100*((float)cnt[0]/(float)num_input) << "%"
+            <<" runtime " << sparse_duration/1000.0 << "ms"
+            << " avgpost " << post_duration/(1000*(num_layers-threshold)) << "ms"
+            << std::endl << std::flush;
   auto _toc = std::chrono::steady_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(_toc - _tic).count();
-  std::cout<<"[Total] finished inferring in "<<duration/1000.0<< "ms"<<std::endl;
-  
+  std::cout << "[Total] finished inferring in " << duration/1000.0 << "ms" << std::endl << std::flush;
+
 }
 
 }

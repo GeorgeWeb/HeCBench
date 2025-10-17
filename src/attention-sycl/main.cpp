@@ -86,6 +86,7 @@ float* attention_device(const float* key, const float* value, const float* query
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of kernels %f (ms)\n", time * 1e-6f / repeat);
+    fflush(stdout);
   }
 
   else if (impl_num == 2) {
@@ -115,6 +116,7 @@ float* attention_device(const float* key, const float* value, const float* query
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of kernels %f (ms)\n", time * 1e-6f / repeat);
+    fflush(stdout);
   }
 
   else if (impl_num == 1) {
@@ -146,6 +148,7 @@ float* attention_device(const float* key, const float* value, const float* query
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of kernels %f (ms)\n", time * 1e-6f / repeat);
+    fflush(stdout);
   }
 
   else {
@@ -183,6 +186,7 @@ float* attention_device(const float* key, const float* value, const float* query
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of kernels %f (ms)\n", time * 1e-6f / repeat);
+    fflush(stdout);
     sycl::free(d_score, q);
   }
 

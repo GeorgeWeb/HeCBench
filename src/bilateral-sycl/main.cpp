@@ -138,6 +138,7 @@ int main(int argc, char *argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (3x3) %f (ms)\n", (time * 1e-6f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_dst, d_dst, img_size_bytes).wait();
 
@@ -168,6 +169,7 @@ int main(int argc, char *argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (6x6) %f (ms)\n", (time * 1e-6f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_dst, d_dst, img_size_bytes).wait();
 
@@ -196,6 +198,7 @@ int main(int argc, char *argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (9x9) %f (ms)\n", (time * 1e-6f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_dst, d_dst, img_size_bytes).wait();
 

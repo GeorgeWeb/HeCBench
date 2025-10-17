@@ -32,11 +32,11 @@ int main(int argc, char* argv[]) {
   // image image with random values
   srand(123);
   for (int i = 0; i < numPix; i++) {
-    uint x = rand() % 256;
-    uint y = rand() % 256;
-    uint z = rand() % 256;
-    uint w = rand() % 256;
-    *(uint*)(&image[i]) = (w << 24) | (z << 16) | (y << 8) | x;
+    uint32_t x = rand() % 256;
+    uint32_t y = rand() % 256;
+    uint32_t z = rand() % 256;
+    uint32_t w = rand() % 256;
+    *(uint32_t*)(&image[i]) = (w << 24) | (z << 16) | (y << 8) | x;
   }
 
 #ifdef USE_GPU
@@ -81,6 +81,7 @@ int main(int argc, char* argv[]) {
     total_time += time;
   }
   printf("Average kernel execution time %f (s)\n", total_time * 1e-9f / repeat);
+  fflush(stdout);
 
   q.memcpy(image, d_image, image_size).wait();
   sycl::free(d_image, q);

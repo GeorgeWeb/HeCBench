@@ -40,8 +40,8 @@ void magnitude(uchar4 &result, float4 &gx, float4 &gy) {
 
 void reference (uchar4 *verificationOutput,
                 const uchar4 *inputImageData, 
-                const uint width,
-                const uint height,
+                const uint32_t width,
+                const uint32_t height,
                 const int pixelSize)
 {
     // x-axis gradient mask
@@ -61,8 +61,8 @@ void reference (uchar4 *verificationOutput,
     };
 
     // apply filter on each pixel (except boundary pixels)
-    for (uint y = 0; y < height; y++)
-      for (uint x = 0; x < width; x++) {
+    for (uint32_t y = 0; y < height; y++)
+      for (uint32_t x = 0; x < width; x++) {
         if( x >= 1 && x < (width-1) && y >= 1 && y < height - 1) {
           int c = x + y * width;
             float4 gx, gy;

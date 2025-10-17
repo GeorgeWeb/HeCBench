@@ -495,6 +495,7 @@ int main(int argc, char *argv[])
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of sph kernels: %f (ms)\n", (time * 1e-6f) / params.number_steps);
+  fflush(stdout);
 
   q.memcpy(fluid_particles, d_fluid_particles,
            num_fluid_particles * sizeof(fluid_particle));

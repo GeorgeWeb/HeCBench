@@ -249,7 +249,9 @@ int main(int argc, char** argv) {
   printf("Final calculation required %d iterations of %d atoms\n", iterations, MAXATOMS);
   printf("Copy time: %f seconds, %f per iteration\n", copytotal, copytotal / (float) iterations);
   printf("Kernel time: %f seconds, %f per iteration\n", runtotal, runtotal / (float) iterations);
+  fflush(stdout);
   printf("Total time: %f seconds\n", mastertotal);
+  fflush(stdout);
   printf("Kernel invocation rate: %f iterations per second\n", iterations / mastertotal);
   printf("GPU to host copy bandwidth: %gMB/sec, %f seconds total\n",
          (volmemsz / (1024.0 * 1024.0)) / hostcopytotal, hostcopytotal);

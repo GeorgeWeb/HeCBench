@@ -157,6 +157,7 @@ int main(int argc, char* argv[]) {
     perplexity_search(q, d_distance, d_data, p, max_iter, tol, n, n_nbrs, time);
 
   printf("Average kernel execution time: %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(data.data(), d_data, sizeof(float)*n*n_nbrs).wait();
 

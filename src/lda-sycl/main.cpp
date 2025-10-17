@@ -142,6 +142,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (training): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   // validation
   q.memset(d_vali, true, sizeof(bool) * num_cols);
@@ -180,6 +181,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (validation): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(vali_losses.data(), d_vali_losses, sizeof(float) * block_cnt);
   q.memcpy(train_losses.data(), d_train_losses, sizeof(float) * block_cnt);

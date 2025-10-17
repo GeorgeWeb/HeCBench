@@ -180,6 +180,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (us)\n", (time * 1e-3) / repeat);
+  fflush(stdout);
 
   q.memcpy(p, d_p, sizeof(float)*freqs_shape).wait();
 

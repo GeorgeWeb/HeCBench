@@ -239,6 +239,7 @@ int main(void) {
 
   double runtime = GetTimer();
   printf("Total time for %i iterations: %f s\n", iter, runtime / 1000.0);
+  fflush(stdout);
 
   // transfer final temperature values back
   q.memcpy(temp_red, temp_red_d, size_temp * sizeof(Real));

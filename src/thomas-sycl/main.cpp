@@ -191,6 +191,7 @@ int main(int argc, char const *argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (ms)\n", (time * 1e-6f) / repeat);
+  fflush(stdout);
 
   q.memcpy(rhs_Thomas_host, rhs_d, matrix_size_bytes).wait();
 

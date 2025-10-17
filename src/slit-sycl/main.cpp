@@ -139,6 +139,7 @@ int main(int argc, char** argv){
   double avg_time = fft2(inputData, fftData, N, repeat);
 
   printf("Average execution time of FFT: %lf ms\n", avg_time);
+  fflush(stdout);
 
   for(int i = 0; i < N*N; i++){
     outputData[i] = fftData[i].real() * fftData[i].real() +

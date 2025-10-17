@@ -129,6 +129,7 @@ void index_accumulate(int batch_size, int output_size, int vector_dim, int repea
   auto end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of kernel1: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   time = 0;
   start = std::chrono::steady_clock::now();
@@ -150,6 +151,7 @@ void index_accumulate(int batch_size, int output_size, int vector_dim, int repea
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of kernel2: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   sycl::free(d_source, q);
   sycl::free(d_output, q);

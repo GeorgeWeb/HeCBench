@@ -4,16 +4,16 @@
 
 #include <math.h>
 
-uint calNumEigenValuesLessThan(const float *diagonal,
+uint32_t calNumEigenValuesLessThan(const float *diagonal,
                                const float *offDiagonal,
-                               const uint  length,
+                               const uint32_t  length,
                                const float x)
 {
-  uint count = 0;
+  uint32_t count = 0;
 
   float prev_diff = (diagonal[0] - x);
   count += (prev_diff < 0)? 1 : 0;
-  for(uint i = 1; i < length; i += 1)
+  for(uint32_t i = 1; i < length; i += 1)
   {
     float diff = (diagonal[i] - x) - ((offDiagonal[i-1] *
           offDiagonal[i-1])/prev_diff);
@@ -26,35 +26,35 @@ uint calNumEigenValuesLessThan(const float *diagonal,
 /*
  * Calculates the eigenvalues of a tridiagonal symmetrix matrix
  */
-uint eigenValueCPUReference(float * diagonal,
+uint32_t eigenValueCPUReference(float * diagonal,
                             float * offDiagonal,
-                            uint    length,
+                            uint32_t    length,
                             float * eigenIntervals,
                             float * newEigenIntervals,
                             float tolerance)
 {
-  uint offset = 0;
-  for(uint i =0; i < length; ++i)
+  uint32_t offset = 0;
+  for(uint32_t i =0; i < length; ++i)
   {
-    uint lid = 2*i;
-    uint uid = lid + 1;
+    uint32_t lid = 2*i;
+    uint32_t uid = lid + 1;
 
-    uint eigenValuesLessLowerBound = calNumEigenValuesLessThan(diagonal,
+    uint32_t eigenValuesLessLowerBound = calNumEigenValuesLessThan(diagonal,
         offDiagonal, length, eigenIntervals[lid]);
-    uint eigenValuesLessUpperBound = calNumEigenValuesLessThan(diagonal,
+    uint32_t eigenValuesLessUpperBound = calNumEigenValuesLessThan(diagonal,
         offDiagonal, length, eigenIntervals[uid]);
 
-    uint numSubIntervals = eigenValuesLessUpperBound - eigenValuesLessLowerBound;
+    uint32_t numSubIntervals = eigenValuesLessUpperBound - eigenValuesLessLowerBound;
 
     if(numSubIntervals > 1)
     {
       float avgSubIntervalWidth = (eigenIntervals[uid] -
           eigenIntervals[lid])/numSubIntervals;
 
-      for(uint j=0; j < numSubIntervals; ++j)
+      for(uint32_t j=0; j < numSubIntervals; ++j)
       {
-        uint newLid = 2* (offset+j);
-        uint newUid = newLid + 1;
+        uint32_t newLid = 2* (offset+j);
+        uint32_t newUid = newLid + 1;
 
         newEigenIntervals[newLid] = eigenIntervals[lid]       + j * avgSubIntervalWidth;
         newEigenIntervals[newUid] = newEigenIntervals[newLid] +     avgSubIntervalWidth;
@@ -67,8 +67,8 @@ uint eigenValueCPUReference(float * diagonal,
 
       float mid        = (lowerBound + upperBound)/2;
 
-      uint newLid = 2* offset;
-      uint newUid = newLid + 1;
+      uint32_t newLid = 2* offset;
+      uint32_t newUid = newLid + 1;
 
       if(upperBound - lowerBound < tolerance)
       {
@@ -100,8 +100,8 @@ int isComplete(float * eigenIntervals, const int length, const float tolerance)
 {
   for(int i=0; i< length; i++)
   {
-    uint lid = 2*i;
-    uint uid = lid + 1;
+    uint32_t lid = 2*i;
+    uint32_t uid = lid + 1;
     if(eigenIntervals[uid] - eigenIntervals[lid] >= tolerance)
     {
       return 1;
@@ -118,13 +118,13 @@ void computeGerschgorinInterval(float * lLimit,
                                 float * uLimit,
                                 const float * diagonal,
                                 const float * offDiagonal,
-                                const uint length)
+                                const uint32_t length)
 {
 
   float lowerLimit = diagonal[0] - fabs(offDiagonal[0]);
   float upperLimit = diagonal[0] + fabs(offDiagonal[0]);
 
-  for(uint i = 1; i < length-1; ++i)
+  for(uint32_t i = 1; i < length-1; ++i)
   {
     float r =  fabs(offDiagonal[i-1]) + fabs(offDiagonal[i]);
     lowerLimit = (lowerLimit > (diagonal[i] - r))? (diagonal[i] - r): lowerLimit;

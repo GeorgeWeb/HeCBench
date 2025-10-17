@@ -142,6 +142,7 @@ void run_bfs_gpu(int no_of_nodes, Node *h_graph_nodes, int edge_list_size,
   while (h_over);
 
   printf("Total kernel execution time : %f (us)\n", time * 1e-3f);
+  fflush(stdout);
 
   q.memcpy(h_cost, d_cost, sizeof(int)*no_of_nodes).wait();
 

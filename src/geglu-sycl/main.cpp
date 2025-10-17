@@ -172,6 +172,8 @@ int main(int argc, char *argv[]) {
           auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
           printf("Batch size: %d, sequence length: %d, hidden dimension: %d\n", batch, shape, dim_last);
           printf("Average execution time of GeGLU kernel: %f (us)\n", (time * 1e-3f) / repeat);
+          fflush(stdout);
+
           free(x_and_gate);
           free(output);
           sycl::free(d_x_and_gate, q);

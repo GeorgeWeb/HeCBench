@@ -255,7 +255,9 @@ int main(int argc, char* argv[])
   sycl::free(electrons_part_gpu, q);
 
   printf("Total kernel execution time (scatter particles) : %.3g (s)\n", sp_time * 1e-9f),
+  fflush(stdout);
   printf("Total time for %d time steps: %.3g (s)\n", NUM_TS, time * 1e-9f);
+  fflush(stdout);
   printf("Time per time step: %.3g (ms)\n", (time * 1e-6f) / NUM_TS);
 
   return 0;

@@ -169,6 +169,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (sumArray): %f (s)\n", (time * 1e-9f) / nArrays);
+  fflush(stdout);
 
   // bit accurate sum
   q.memcpy(result, d_result, narray_size).wait();

@@ -193,6 +193,7 @@ int main(int argc, char* argv[]) {
   }
 
   printf("Average filtering time %lf (s)\n", (time * 1e-9) / repeat);
+  fflush(stdout);
 
   q.memcpy(out, d_out, size_bytes);
   q.memcpy(box, d_box, box_bytes);

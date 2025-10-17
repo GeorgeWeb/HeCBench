@@ -3,6 +3,8 @@
 #include <chrono>
 #include <sycl/sycl.hpp>
 
+#include "Utility.h"
+
 #define p_IJWID 6
 #define p_JID   4
 #define p_JWID  5

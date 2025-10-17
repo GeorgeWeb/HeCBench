@@ -162,6 +162,7 @@ int main(int argc, char* argv[])
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (ms)\n", time * 1e-6f / time_step);
+  fflush(stdout);
 
   sycl::free(d_p, q);
   sycl::free(d_m, q);

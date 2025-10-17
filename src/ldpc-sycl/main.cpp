@@ -314,6 +314,7 @@ int main()
 
       printf ("\n");
       printf ("Total kernel execution time: %f (s)\n", total_time * 1e-9f);
+      fflush(stdout);
       printf ("# codewords = %d, CW=%d, MCW=%d\n",total_codeword, CW, MCW);
       printf ("total bit error = %d\n", total_bit_error);
       printf ("total frame error = %d\n", total_frame_error);

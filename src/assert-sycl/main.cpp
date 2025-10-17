@@ -125,6 +125,7 @@ bool runPerf(sycl::queue &q, int argc, char **argv)
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> time = end - start;
   printf("Kernel time : %f\n", time.count());
+  fflush(stdout);
 
   printf("Each thread in the kernel executes threadID assertions\n");
   start = std::chrono::steady_clock::now();
@@ -136,6 +137,7 @@ bool runPerf(sycl::queue &q, int argc, char **argv)
   end = std::chrono::steady_clock::now();
   time = end - start;
   printf("Kernel time : %f\n", time.count());
+  fflush(stdout);
 
   return true;
 }

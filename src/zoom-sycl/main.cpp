@@ -409,6 +409,7 @@ void zoom (sycl::queue &q, int repeat, int input_sizes[4], float zoom_factor[2])
 
   printf("Average execution time of the %s kernel: %f (us)\n",
          is_zoom_in ? "zoom-in" : "zoom-out", total_time * 1e-3 / repeat);
+  fflush(stdout);
   printf("Kernel checksum: %lf\n", checksum);
 }
 

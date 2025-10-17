@@ -69,6 +69,7 @@ void testcase(sycl::queue &q, const int num, const int repeat)
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   sycl::free(dOData, q);
 }

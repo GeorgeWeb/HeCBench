@@ -450,6 +450,7 @@ int main(int argc, char *argv[]) {
   double runtime = elapsed_seconds.count() / repeat;
 
   printf("average runtime: (%d runs):   %.6f s\n", repeat, runtime);
+  fflush(stdout);
   printf("throughput: %.6f Mnodes/s\n", g.nodes * 0.000001 / runtime);
   printf("throughput: %.6f Medges/s\n", g.edges * 0.000001 / runtime);
 

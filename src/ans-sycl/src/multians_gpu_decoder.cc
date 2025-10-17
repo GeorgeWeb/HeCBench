@@ -28,7 +28,7 @@ inline void decode_subsequence(
     std::uint32_t &out_pos,
     SYMBOL_TYPE* out_ptr,
     std::uint32_t &next_out_pos,
-    const uint* __restrict__ table,
+    const uint32_t* __restrict__ table,
     const std::uint32_t bits_in_unit,
     const std::uint32_t number_of_states,
     std::uint32_t &last_at,
@@ -67,7 +67,7 @@ inline void decode_subsequence(
       if(overflow && current_subsequence > 0 && subsequences_processed == 0) {
 
         // decode first symbol
-        const uint hit_p = table[state - number_of_states];
+        const uint32_t hit_p = table[state - number_of_states];
         const STATE_TYPE next_state_p = (std::uint16_t) (hit_p & 0x0000FFFF);
         std::uint32_t taken = hit_p >> 24;
 
@@ -127,7 +127,7 @@ inline void decode_subsequence(
 
           last_state = state;
 
-          const uint hit = table[state - number_of_states];
+          const uint32_t hit = table[state - number_of_states];
 
           // decode a symbol
           const STATE_TYPE next_state = (std::uint16_t) (hit & 0x0000FFFF);
@@ -194,7 +194,7 @@ void phase1_decode_subseq(
     std::uint32_t total_num_subsequences,
     std::uint32_t table_size,
     UNIT_TYPE* in_ptr,
-    const uint* __restrict__ table,
+    const uint32_t* __restrict__ table,
     sycl::uint4* sync_points,
     const std::uint32_t bits_in_unit,
     const std::uint32_t number_of_states,
@@ -364,7 +364,7 @@ void phase2_synchronise_blocks(
     std::uint32_t table_size,
     std::uint32_t num_blocks,
     UNIT_TYPE* in_ptr,
-    const uint* __restrict__ table,
+    const uint32_t* __restrict__ table,
     sycl::uint4* sync_points,
     SYMBOL_TYPE* block_synchronised,
     const std::uint32_t bits_in_unit,
@@ -497,7 +497,7 @@ void phase4_decode_write_output(
     UNIT_TYPE* in_ptr,
     SYMBOL_TYPE* out_ptr,
     std::uint32_t output_size,
-    const uint* __restrict__ table,
+    const uint32_t* __restrict__ table,
     const sycl::uint4* __restrict__ sync_points,
     const std::uint32_t bits_in_unit,
     const std::uint32_t number_of_states,

@@ -113,7 +113,7 @@ int sort_sparse_matrix(sycl::queue &q, intType a_nrows, intType a_ncols,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   std::cout << "Average execution time of CSR sort: " << (time * 1e-3f) / repeat
-            << " us" << std::endl;
+            << " us" << std::endl << std::flush;
 
   // Release the matrix_handle
   oneapi::mkl::sparse::release_matrix_handle(q, &A, {}).wait();

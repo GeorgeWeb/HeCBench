@@ -127,6 +127,7 @@ void topk_softmax(int num_tokens, int num_experts, int topk, int repeat)
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of kernels: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   sycl::free(d_topk_weights, q);
   sycl::free(d_topk_indices, q);

@@ -194,6 +194,7 @@ int main(int argc, char *argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time (VEC1) %lf (s)\n", time * 1e-9f);
+  fflush(stdout);
  
   start = std::chrono::steady_clock::now();
   for (int p = 1; p <= repeat; p++) {
@@ -210,6 +211,7 @@ int main(int argc, char *argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time (VEC2) %lf (s)\n", time * 1e-9f);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
   for (int p = 1; p <= repeat; p++) {
@@ -226,6 +228,7 @@ int main(int argc, char *argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time (VEC4) %lf (s)\n", time * 1e-9f);
+  fflush(stdout);
 
   sycl::free(d_self_info, q);
   sycl::free(d_ret_info, q);

@@ -248,6 +248,7 @@ void ForwardSub(float *a, float *b, float *m, int size, int timing) {
   auto end = get_time();
   if (timing)
     printf("Total kernel execution time %lld (us)\n", (end - start));
+    fflush(stdout);
 
   q.memcpy(a, d_a, nelems_bytes);
   q.memcpy(b, d_b, size_bytes);

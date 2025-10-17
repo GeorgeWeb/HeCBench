@@ -142,6 +142,7 @@ void atomicPerf (int n, int t, int repeat)
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of BlockRangeAtomicOnGlobalMem: %f (us)\n",
           time * 1e-3f / repeat);
+<<<<<<< Updated upstream
 
   q.memcpy(h_data, d_data, data_size).wait();
   memcpy(r_data, data, data_size);
@@ -150,6 +151,11 @@ void atomicPerf (int n, int t, int repeat)
   fail = memcmp(h_data, r_data, data_size);
   printf("%s\n", fail ? "FAIL" : "PASS");
   
+||||||| Stash base
+
+=======
+  fflush(stdout);
+>>>>>>> Stashed changes
   q.memcpy(d_data, data, data_size).wait();
   start = std::chrono::steady_clock::now();
   for(int i=0; i<repeat; i++)
@@ -165,6 +171,7 @@ void atomicPerf (int n, int t, int repeat)
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of WarpRangeAtomicOnGlobalMem: %f (us)\n",
           time * 1e-3f / repeat);
+<<<<<<< Updated upstream
 
   q.memcpy(h_data, d_data, data_size).wait();
   memcpy(r_data, data, data_size);
@@ -173,6 +180,11 @@ void atomicPerf (int n, int t, int repeat)
   fail = memcmp(h_data, r_data, data_size);
   printf("%s\n", fail ? "FAIL" : "PASS");
 
+||||||| Stash base
+
+=======
+  fflush(stdout);
+>>>>>>> Stashed changes
   q.memcpy(d_data, data, data_size).wait();
   start = std::chrono::steady_clock::now();
   for(int i=0; i<repeat; i++)
@@ -188,6 +200,7 @@ void atomicPerf (int n, int t, int repeat)
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of SingleRangeAtomicOnGlobalMem: %f (us)\n",
           time * 1e-3f / repeat);
+<<<<<<< Updated upstream
 
   q.memcpy(h_data, d_data, data_size).wait();
   memcpy(r_data, data, data_size);
@@ -196,6 +209,11 @@ void atomicPerf (int n, int t, int repeat)
   fail = memcmp(h_data, r_data, data_size);
   printf("%s\n", fail ? "FAIL" : "PASS");
 
+||||||| Stash base
+
+=======
+  fflush(stdout);
+>>>>>>> Stashed changes
   q.memcpy(d_data, data, data_size).wait();
   start = std::chrono::steady_clock::now();
   for(int i=0; i<repeat; i++)
@@ -212,11 +230,17 @@ void atomicPerf (int n, int t, int repeat)
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of BlockRangeAtomicOnSharedMem: %f (us)\n",
           time * 1e-3f / repeat);
+<<<<<<< Updated upstream
 
   q.memcpy(h_data, d_data, data_size).wait();
   fail = memcmp(h_data, data, data_size);
   printf("%s\n", fail ? "FAIL" : "PASS");
 
+||||||| Stash base
+
+=======
+  fflush(stdout);
+>>>>>>> Stashed changes
   q.memcpy(d_data, data, data_size).wait();
   start = std::chrono::steady_clock::now();
   for(int i=0; i<repeat; i++)
@@ -233,11 +257,17 @@ void atomicPerf (int n, int t, int repeat)
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of WarpRangeAtomicOnSharedMem: %f (us)\n",
           time * 1e-3f / repeat);
+<<<<<<< Updated upstream
 
   q.memcpy(h_data, d_data, data_size).wait();
   fail = memcmp(h_data, data, data_size);
   printf("%s\n", fail ? "FAIL" : "PASS");
 
+||||||| Stash base
+
+=======
+  fflush(stdout);
+>>>>>>> Stashed changes
   q.memcpy(d_data, data, data_size).wait();
   start = std::chrono::steady_clock::now();
   for(int i=0; i<repeat; i++)
@@ -255,11 +285,17 @@ void atomicPerf (int n, int t, int repeat)
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of SingleRangeAtomicOnSharedMem: %f (us)\n",
           time * 1e-3f / repeat);
+<<<<<<< Updated upstream
 
   q.memcpy(h_data, d_data, data_size).wait();
   fail = memcmp(h_data, data, data_size);
   printf("%s\n", fail ? "FAIL" : "PASS");
 
+||||||| Stash base
+
+=======
+  fflush(stdout);
+>>>>>>> Stashed changes
   free(data);
   free(h_data);
   free(r_data);

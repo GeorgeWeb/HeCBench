@@ -50,6 +50,7 @@ void distance_device(const sycl::double4* loc, double* dist,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (s)\n", (time * 1e-9f) / iteration);
+  fflush(stdout);
 
   q.memcpy(dist, out, sizeof(double) * n).wait();
   sycl::free(in, q);

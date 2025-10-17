@@ -49,9 +49,9 @@ inline float abspow2(float & a)
 
 //Integer logarithm base 2.
 template <typename IntType>
-inline uint ilog2(IntType n)
+inline uint32_t ilog2(IntType n)
 {
-  uint l;
+  uint32_t l;
   for (l = 0; n; n >>= 1, ++l);
   return l;
 }
@@ -70,14 +70,14 @@ inline void rotate(T& a, T& b)
 
 //Fast Walsh-Hadamard transform.
 template <typename T>
-inline void fwht(T *data, uint n)
+inline void fwht(T *data, uint32_t n)
 {
   unsigned l2 = ilog2(n) - 1;
-  for ( uint i = 0; i < l2; ++i )
+  for ( uint32_t i = 0; i < l2; ++i )
   {
-    for (uint j = 0; j < n; j += (1 << (i + 1)))
-    for (uint k = 0; k < (uint)(1 << i); ++k)
-      rotate(data[j + k], data[j + k + (uint)(1 << i)]);
+    for (uint32_t j = 0; j < n; j += (1 << (i + 1)))
+    for (uint32_t k = 0; k < (uint32_t)(1 << i); ++k)
+      rotate(data[j + k], data[j + k + (uint32_t)(1 << i)]);
   }
 }
 
@@ -85,11 +85,11 @@ inline void fwht(T *data, uint n)
 inline void get_block_addresses(
   sycl::nd_item<2> &item,
   const sycl::uint2 & start_point,    //IN: first reference patch of a batch
-  const uint & patch_stack_size,  //IN: maximal size of a 3D group
+  const uint32_t & patch_stack_size,  //IN: maximal size of a 3D group
   const sycl::uint2 & stacks_dim,    //IN: Size of area, where reference patches could be located
   const Params & params,      //IN: Denoising parameters
   sycl::uint2 & outer_address,      //OUT: Coordinetes of reference patch in the image
-  uint & start_idx)        //OUT: Address of a first element of the 3D group in stacks array
+  uint32_t & start_idx)        //OUT: Address of a first element of the 3D group in stacks array
 {
   const int bidx = item.get_group(1);
   const int bidy = item.get_group(0);
@@ -118,13 +118,13 @@ void get_block(
     const sycl::uint2 start_point,         //IN: first reference patch of a batch
     const unsigned char* __restrict image,        //IN: image
     const ushort* __restrict stacks,        //IN: array of adresses of similar patches
-    const uint* __restrict g_num_patches_in_stack,    //IN: numbers of patches in 3D groups
+    const uint32_t* __restrict g_num_patches_in_stack,    //IN: numbers of patches in 3D groups
     float* patch_stack,          //OUT: assembled 3D groups
     const sycl::uint2 image_dim,          //IN: image dimensions
     const sycl::uint2 stacks_dim,          //IN: dimensions limiting addresses of reference patches
     const Params params)           //IN: denoising parameters
 {
-  uint startidx;
+  uint32_t startidx;
   sycl::uint2 outer_address;
   get_block_addresses(item, start_point,  params.k*params.k*(params.N+1), stacks_dim, params, outer_address, startidx);
 
@@ -140,11 +140,11 @@ void get_block(
   
   const ushort* z_ptr = &stacks[ idx3(0, bidx, bidy, params.N,  gridx) ];
 
-  uint num_patches = g_num_patches_in_stack[ idx2(bidx, bidy, gridx) ];
+  uint32_t num_patches = g_num_patches_in_stack[ idx2(bidx, bidy, gridx) ];
   
   patch_stack[ idx3(lidx, lidy, 0, params.k, params.k) ] = 
     (float)(image[ idx2(outer_address.x()+lidx, outer_address.y()+lidy, image_dim.x())]);
-  for(uint i = 0; i < num_patches; ++i)
+  for(uint32_t i = 0; i < num_patches; ++i)
   {
     int x = (int)((signed char)(z_ptr[i] & 0xFF));
     int y = (int)((signed char)((z_ptr[i] >> 8) & 0xFF));
@@ -166,10 +166,10 @@ void hard_treshold_block(
   const sycl::uint2 start_point,    //IN: first reference patch of a batch
   float* __restrict patch_stack,        //IN/OUT: 3D groups with thransfomed patches
   float* __restrict w_P,          //OUT: weight of each 3D group
-  const uint* __restrict g_num_patches_in_stack,  //IN: numbers of patches in 3D groups
+  const uint32_t* __restrict g_num_patches_in_stack,  //IN: numbers of patches in 3D groups
   sycl::uint2 stacks_dim,        //IN: dimensions limiting addresses of reference patches
   const Params params,      //IN: denoising parameters
-  const uint sigma        //IN: noise variance
+  const uint32_t sigma        //IN: noise variance
 )
 {
   const int lidx = item.get_local_id(1);
@@ -181,29 +181,29 @@ void hard_treshold_block(
   const int gridx = item.get_group_range(1);
 
   int paramN = params.N+1;
-  uint tcount = dimx*dimy;
-  uint tid = idx2(lidx, lidy, dimx);
-  uint patch_stack_size = tcount * paramN;
+  uint32_t tcount = dimx*dimy;
+  uint32_t tid = idx2(lidx, lidy, dimx);
+  uint32_t patch_stack_size = tcount * paramN;
 
-  uint startidx;
+  uint32_t startidx;
   sycl::uint2 outer_address;
   get_block_addresses(item, start_point, patch_stack_size, stacks_dim, params, outer_address, startidx);
   
   if (outer_address.x() >= stacks_dim.x() || outer_address.y() >= stacks_dim.y()) return;
 
-  uint num_patches = g_num_patches_in_stack[ idx2(bidx, bidy, gridx) ]+1; //+1 for the reference patch.
+  uint32_t num_patches = g_num_patches_in_stack[ idx2(bidx, bidy, gridx) ]+1; //+1 for the reference patch.
   float* s_patch_stack = data + (tid * (num_patches+1)); //+1 for avoiding bank conflicts //TODO:sometimes
   patch_stack = patch_stack + startidx + tid;
     
   //Load to the shared memory
-  for(uint i = 0; i < num_patches; ++i)
+  for(uint32_t i = 0; i < num_patches; ++i)
     s_patch_stack[i] = patch_stack[ i*tcount ];  
 
   //1D Transform
   fwht(s_patch_stack, num_patches);
   
   //Hard-thresholding + counting of nonzero coefficients
-  uint nonzero = 0;
+  uint32_t nonzero = 0;
   float threshold = params.L3D * sycl::sqrt((float)(num_patches * sigma));
   for(int i = 0; i < num_patches; ++i)
   {
@@ -219,16 +219,16 @@ void hard_treshold_block(
   fwht(s_patch_stack, num_patches);
   
   //Normalize and save to global memory
-  for (uint i = 0; i < num_patches; ++i)
+  for (uint32_t i = 0; i < num_patches; ++i)
   {
     patch_stack[ i*tcount ] = s_patch_stack[i] / num_patches;
   }
   
   //Reuse the shared memory for 32 partial sums
   item.barrier(sycl::access::fence_space::local_space);
-  uint* shared = (uint*)data;
+  uint32_t* shared = (uint32_t*)data;
   //Sum the number of non-zero coefficients for a 3D group
-  nonzero = blockReduceSum<uint>(item, shared, nonzero, tid, tcount);
+  nonzero = blockReduceSum<uint32_t>(item, shared, nonzero, tid, tcount);
   
   //Save the weight of a 3D group (1/nonzero coefficients)
   if (tid == 0)
@@ -252,7 +252,7 @@ void aggregate_block(
   const float* __restrict kaiser_window,    //IN: kaiser window
   float* numerator,        //IN/OUT: numerator aggregation buffer (have to be initialized to 0)
   float* denominator,        //IN/OUT: denominator aggregation buffer (have to be initialized to 0)
-  const uint* __restrict g_num_patches_in_stack,  //IN: numbers of patches in 3D groups
+  const uint32_t* __restrict g_num_patches_in_stack,  //IN: numbers of patches in 3D groups
   const sycl::uint2 image_dim,        //IN: image dimensions
   const sycl::uint2 stacks_dim,        //IN: dimensions limiting addresses of reference patches
   const Params params        //IN: denoising parameters
@@ -265,7 +265,7 @@ void aggregate_block(
   //const int dimx = item.get_local_range(1);
   const int gridx = item.get_group_range(1);
 
-  uint startidx;
+  uint32_t startidx;
   sycl::uint2 outer_address;
   get_block_addresses(item, start_point, params.k*params.k*(params.N+1), stacks_dim, params, outer_address, startidx);
   
@@ -273,7 +273,7 @@ void aggregate_block(
 
   patch_stack += startidx;
 
-  uint num_patches = g_num_patches_in_stack[ idx2(bidx, bidy, gridx) ]+1;
+  uint32_t num_patches = g_num_patches_in_stack[ idx2(bidx, bidy, gridx) ]+1;
 
   float wp = w_P[ idx2(bidx, bidy, gridx ) ];
   
@@ -281,7 +281,7 @@ void aggregate_block(
 
   float kaiser_value = kaiser_window[ idx2(lidx, lidy, params.k) ];
 
-  for(uint z = 0; z < num_patches; ++z)
+  for(uint32_t z = 0; z < num_patches; ++z)
   {
     int x = 0;
     int y = 0;
@@ -317,8 +317,8 @@ void aggregate_final(
   const sycl::uint2 image_dim,      //IN: image dimensions
   unsigned char*__restrict result)        //OUT: image estimate
 {
-  uint idx = item.get_global_id(1);
-  uint idy = item.get_global_id(0);
+  uint32_t idx = item.get_global_id(1);
+  uint32_t idy = item.get_global_id(0);
   if (idx >= image_dim.x() || idy >= image_dim.y()) return;
 
   int value = sycl::rint(numerator[ idx2(idx,idy,image_dim.x()) ] /
@@ -334,7 +334,7 @@ void run_get_block(
   const sycl::uint2 start_point,
   unsigned char *image,
   ushort *stacks,
-  uint *num_patches_in_stack,
+  uint32_t *num_patches_in_stack,
   float *patch_stack,
   const sycl::uint2 image_dim,
   const sycl::uint2 stacks_dim,
@@ -365,13 +365,13 @@ void run_hard_treshold_block(
   const sycl::uint2 start_point,
   float *patch_stack,
   float *w_P,
-  uint *num_patches_in_stack,
+  uint32_t *num_patches_in_stack,
   const sycl::uint2 stacks_dim,
   const Params params,
-  const uint sigma,
+  const uint32_t sigma,
   const sycl::range<2> lws,  
   const sycl::range<2> gws,
-  const uint shared_memory_size)
+  const uint32_t shared_memory_size)
 {
   q.submit([&] (sycl::handler &cgh) {
     sycl::local_accessor<float, 1>
@@ -402,7 +402,7 @@ void run_aggregate_block(
   float *kaiser_window,
   float *numerator,
   float *denominator,
-  uint *num_patches_in_stack,
+  uint32_t *num_patches_in_stack,
   const sycl::uint2 image_dim,
   const sycl::uint2 stacks_dim,
   const Params params,

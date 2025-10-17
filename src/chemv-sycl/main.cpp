@@ -152,6 +152,7 @@ void chemv_gpu(float alpha_re, float alpha_im, float beta_re, float beta_im,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of chemv kernels: %f (us)\n", (time * 1e-3f) / REPEAT);
+  fflush(stdout);
 
   q.memcpy(Y, d_Y, Y_SIZE * sizeof(struct ComplexFloat)).wait();
   sycl::free(d_AT, q);

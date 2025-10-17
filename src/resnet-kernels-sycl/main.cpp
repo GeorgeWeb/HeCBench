@@ -48,7 +48,9 @@ int main(int argc, char** argv) {
     }
   }
   printf("Case %d: Average device offload time: [%lf us]\n", mode, time_total * 1e-3 / (repeat - 2));
+  fflush(stdout);
   printf("        Average kernel time: [%lf us]\n", ktime_total * 1e-3 / (repeat - 2));
+  fflush(stdout);
 
   return 0;
 }

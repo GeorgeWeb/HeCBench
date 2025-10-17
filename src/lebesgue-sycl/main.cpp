@@ -47,6 +47,7 @@ void test01 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+  fflush(stdout);
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
 
 #ifdef DEBUG
@@ -101,7 +102,11 @@ void test02 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+<<<<<<< HEAD
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
+=======
+  fflush(stdout);
+>>>>>>> 8aba9420 (Temp: Adding explicit fflush on result output to stdout due to OpenCL driver problem)
 
 #ifdef DEBUG
   r8vec_print ( n_max, l,
@@ -155,7 +160,11 @@ void test03 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+<<<<<<< HEAD
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
+=======
+  fflush(stdout);
+>>>>>>> 8aba9420 (Temp: Adding explicit fflush on result output to stdout due to OpenCL driver problem)
 
 #ifdef DEBUG
   r8vec_print ( n_max, l,
@@ -209,7 +218,11 @@ void test04 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+<<<<<<< HEAD
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
+=======
+  fflush(stdout);
+>>>>>>> 8aba9420 (Temp: Adding explicit fflush on result output to stdout due to OpenCL driver problem)
 
 #ifdef DEBUG
   r8vec_print ( n_max, l,
@@ -263,7 +276,11 @@ void test05 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+<<<<<<< HEAD
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
+=======
+  fflush(stdout);
+>>>>>>> 8aba9420 (Temp: Adding explicit fflush on result output to stdout due to OpenCL driver problem)
 
 #ifdef DEBUG
   r8vec_print ( n_max, l,
@@ -317,7 +334,11 @@ void test06 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+<<<<<<< HEAD
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
+=======
+  fflush(stdout);
+>>>>>>> 8aba9420 (Temp: Adding explicit fflush on result output to stdout due to OpenCL driver problem)
 
 #ifdef DEBUG
   r8vec_print ( n_max, l,
@@ -371,7 +392,11 @@ void test07 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+<<<<<<< HEAD
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
+=======
+  fflush(stdout);
+>>>>>>> 8aba9420 (Temp: Adding explicit fflush on result output to stdout due to OpenCL driver problem)
 
 #ifdef DEBUG
   r8vec_print ( n_max, l,
@@ -425,7 +450,11 @@ void test08 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+<<<<<<< HEAD
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
+=======
+  fflush(stdout);
+>>>>>>> 8aba9420 (Temp: Adding explicit fflush on result output to stdout due to OpenCL driver problem)
 
 #ifdef DEBUG
   r8vec_print ( n_max, l,
@@ -479,7 +508,11 @@ void test09 ( sycl::queue &q, int nfun  )
     free ( x );
   }
   printf ( "  Total kernel execution time %f (s)\n", total_time * 1e-9f);
+<<<<<<< HEAD
   printf ( "  %s\n", ok ? "PASS" : "FAIL");
+=======
+  fflush(stdout);
+>>>>>>> 8aba9420 (Temp: Adding explicit fflush on result output to stdout due to OpenCL driver problem)
 
 #ifdef DEBUG
   r8vec_print ( n_max, l,

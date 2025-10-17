@@ -173,6 +173,7 @@ int main() {
   free(h_grid_inference);
 
   printf("Total kernel execution time (s): %lf\n", etime * 1e-9);
+  fflush(stdout);
   printf("Structural Similarity Index Measure: %f\n",
           ssim_sum / (dims - win_size + 1).long_product());
 

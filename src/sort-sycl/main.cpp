@@ -104,7 +104,7 @@ int main(int argc, char** argv)
     auto start = std::chrono::steady_clock::now();
 
     // Assuming an 8 bit byte.
-    // shift is uint because Computecpp compiler has no operator>>(unsigned int, int);
+    // shift is uint32_t because Computecpp compiler has no operator>>(unsigned int, int);
     for (unsigned int shift = 0; shift < sizeof(T)*8; shift += radix_width)
     {
       // Like scan, we use a reduce-then-scan approach

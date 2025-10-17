@@ -196,6 +196,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto elapsed_time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (us)\n", (elapsed_time * 1e-3) / num_steps);
+  fflush(stdout);
 
   q.memcpy(spikes, d_spikes, neurons_size);
   q.memcpy(voltage, d_voltage, neurons_size);

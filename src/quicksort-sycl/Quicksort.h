@@ -63,7 +63,7 @@ T select (T a, T b, P c) {
 }
 
 
-uint median(uint x1, uint x2, uint x3) {
+uint32_t median(uint32_t x1, uint32_t x2, uint32_t x3) {
   if (x1 < x2) {
     if (x2 < x3) {
       return x2;
@@ -108,15 +108,15 @@ uint median(uint x1, uint x2, uint x3) {
 // an array to be sorted, associated pivot and direction of the sort.
 template <class T>
 struct work_record {
-  uint start;
-  uint end;
+  uint32_t start;
+  uint32_t end;
   T pivot;
-  uint direction;
+  uint32_t direction;
 
   work_record() :
     start(0), end(0), pivot(T(0)), direction(EMPTY_RECORD) {}
 
-  work_record(uint s, uint e, uint p, uint d) :
+  work_record(uint32_t s, uint32_t e, uint32_t p, uint32_t d) :
     start(s), end(e), pivot(p), direction(d) {}
 };
 
@@ -127,9 +127,9 @@ struct work_record {
 // During processing, sstart and send get incremented. At the end of gqsort_kernel, all the
 // parent record fields are used to calculate new pivots and new work records.
 typedef struct parent_record {
-  uint sstart, send, oldstart, oldend, blockcount;
+  uint32_t sstart, send, oldstart, oldend, blockcount;
 
-  parent_record(uint ss, uint se, uint os, uint oe, uint bc) :
+  parent_record(uint32_t ss, uint32_t se, uint32_t os, uint32_t oe, uint32_t bc) :
     sstart(ss), send(se), oldstart(os), oldend(oe), blockcount(bc) {}
 } parent_record;
 
@@ -137,15 +137,15 @@ typedef struct parent_record {
 // start and end indexes into input array, pivot, direction of sorting and the parent record index
 template <class T>
 struct block_record {
-  uint start;
-  uint end;
+  uint32_t start;
+  uint32_t end;
   T pivot;
-  uint direction;
-  uint parent;
+  uint32_t direction;
+  uint32_t parent;
 
   block_record() : start(0), end(0), pivot(T(0)), direction(EMPTY_RECORD), parent(0) {}
 
-  block_record(uint s, uint e, T p, uint d, uint prnt) :
+  block_record(uint32_t s, uint32_t e, T p, uint32_t d, uint32_t prnt) :
 	  start(s), end(e), pivot(p), direction(d), parent(prnt) {}
 };
 #endif // QUICKSORT_H

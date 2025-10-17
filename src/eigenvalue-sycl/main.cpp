@@ -1,10 +1,10 @@
 /**********************************************************************
-  Copyright ©2013 Advanced Micro Devices, Inc. All rights reserved.
+  Copyright ï¿½2013 Advanced Micro Devices, Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-  •   Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-  •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
+  ï¿½   Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+  ï¿½   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
   other materials provided with the distribution.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -28,7 +28,7 @@
 void runKernels(
     sycl::queue &q,
     const float *diagonalBuffer,
-           uint *numEigenValuesIntervalBuffer,
+           uint32_t *numEigenValuesIntervalBuffer,
     const float *offDiagonalBuffer,
     float **eigenIntervalBuffer,
 
@@ -38,7 +38,7 @@ void runKernels(
     const int length,
     const float tolerance,
     // index of the two eigenInterval buffers
-    uint &in )
+    uint32_t &in )
 {
   sycl::range<1> gws (length);
   sycl::range<1> lws (256);
@@ -100,7 +100,7 @@ int main(int argc, char * argv[])
   // Number of iterations for kernel execution
   int iterations = atoi(argv[2]);
   // Seed value for random number generation 
-  uint seed = 123;
+  uint32_t seed = 123;
   float tolerance;
   // diagonal elements of the matrix
   float *diagonal;
@@ -109,11 +109,11 @@ int main(int argc, char * argv[])
   // calculated eigen values of the matrix
   float *eigenIntervals[2];
   // index to one of the two eigen interval buffers
-  uint  in;
+  uint32_t  in;
   // eigen values using reference implementation
   float *verificationEigenIntervals[2];
   // index to one of the two eigen interval arrays
-  uint   verificationIn;
+  uint32_t   verificationIn;
 
   // allocate memory for diagonal elements of the matrix  of size lengthxlength
 
@@ -127,12 +127,12 @@ int main(int argc, char * argv[])
     length = 256;
   }
 
-  uint diagonalSizeBytes = length * sizeof(float);
+  uint32_t diagonalSizeBytes = length * sizeof(float);
   diagonal = (float *) malloc(diagonalSizeBytes);
   CHECK_ALLOCATION(diagonal, "Failed to allocate host memory. (diagonal)");
 
   // allocate memory for offdiagonal elements of the matrix of length (length-1)
-  uint offDiagonalSizeBytes = (length - 1) * sizeof(float);
+  uint32_t offDiagonalSizeBytes = (length - 1) * sizeof(float);
   offDiagonal = (float *) malloc(offDiagonalSizeBytes);
   CHECK_ALLOCATION(offDiagonal, "Failed to allocate host memory. (offDiagonal)");
 
@@ -141,7 +141,7 @@ int main(int argc, char * argv[])
    * by the lower bound interleaved
    * An array of two is used for using it for two different passes
    */
-  uint eigenIntervalsSizeBytes = (2*length) * sizeof(float);
+  uint32_t eigenIntervalsSizeBytes = (2*length) * sizeof(float);
   for(int i = 0; i < 2; ++i)
   {
     eigenIntervals[i] = (float *) malloc(eigenIntervalsSizeBytes);
@@ -188,7 +188,7 @@ int main(int argc, char * argv[])
   q.memcpy(diagonalBuffer, diagonal, diagonalSizeBytes); 
 
   // store the number of eigenvalues in each interval
-  uint *numEigenValuesIntervalBuffer = sycl::malloc_device<uint>(length, q); 
+  uint32_t *numEigenValuesIntervalBuffer = sycl::malloc_device<uint32_t>(length, q); 
 
   // store the offDiagonal elements of the matrix
   float *offDiagonalBuffer = sycl::malloc_device<float>(length - 1, q);

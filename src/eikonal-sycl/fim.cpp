@@ -23,8 +23,8 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
   zdim = cmem.zdim;
 
   // create volumes
-  uint volSize = cmem.volsize;
-  uint blockNum = cmem.blknum;
+  uint32_t volSize = cmem.volsize;
+  uint32_t blockNum = cmem.blknum;
 
   printf("# of total voxels : %d\n", volSize);
   printf("# of total blocks : %d\n", blockNum);
@@ -33,29 +33,29 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
 
   // copy speed table to constant variable
   int nIter = cmem.nIter;
-  uint nActiveBlock = cmem.nActiveBlock; // active list
+  uint32_t nActiveBlock = cmem.nActiveBlock; // active list
 
   double *d_spd = cmem.d_spd;
   DOUBLE *d_sol = cmem.d_sol;
   DOUBLE *t_sol = cmem.t_sol;
 
-  uint *d_list = cmem.d_list;
+  uint32_t *d_list = cmem.d_list;
   bool *d_listVol = cmem.d_listVol;
 
   bool *d_con = cmem.d_con;
   bool *d_mask = cmem.d_mask;
 
   // copy so that original value should not be modified
-  uint *h_list = (uint*) malloc(blockNum*sizeof(uint));
+  uint32_t *h_list = (uint32_t*) malloc(blockNum*sizeof(uint32_t));
   bool *h_listed = (bool*) malloc(blockNum*sizeof(bool));
   bool *h_listVol = (bool*) malloc(blockNum*sizeof(bool));
 
   // initialization
-  memcpy(h_list, cmem.h_list, blockNum*sizeof(uint));
+  memcpy(h_list, cmem.h_list, blockNum*sizeof(uint32_t));
   memcpy(h_listed, cmem.h_listed, blockNum*sizeof(bool));
   memcpy(h_listVol, cmem.h_listVol, blockNum*sizeof(bool));
 
-  q.memcpy(cmem.d_list, cmem.h_list, nActiveBlock*sizeof(uint));
+  q.memcpy(cmem.d_list, cmem.h_list, nActiveBlock*sizeof(uint32_t));
   q.memcpy(cmem.d_listVol, cmem.h_listVol, blockNum*sizeof(bool));
   q.memcpy(cmem.d_sol, cmem.h_sol, volSize*sizeof(DOUBLE));
   q.memcpy(cmem.t_sol, cmem.h_sol, volSize*sizeof(DOUBLE));
@@ -66,7 +66,7 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
   sycl::range<3> blocks (BLOCK_LENGTH, BLOCK_LENGTH, BLOCK_LENGTH);
 
   int nTotalIter = 0;
-  //uint sharedmemsize = sizeof(float)*BLOCK_LENGTH*BLOCK_LENGTH*(3*BLOCK_LENGTH + 2);
+  //uint32_t sharedmemsize = sizeof(float)*BLOCK_LENGTH*BLOCK_LENGTH*(3*BLOCK_LENGTH + 2);
 
   std::vector<int> sourceList;
   sourceList.push_back((zdim/2)*ydim*xdim + (ydim/2)*xdim + (xdim/2));
@@ -87,7 +87,7 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
   q.wait();
 #endif
 
-  uint nTotalBlockProcessed = 0;
+  uint32_t nTotalBlockProcessed = 0;
 
   // start solver
   while(nActiveBlock > 0)
@@ -123,7 +123,7 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
       printf("Grid size : %d x %d\n", grids[2], grids[1]);
 #endif
 
-    q.memcpy(d_list, h_list, nActiveBlock*sizeof(uint));
+    q.memcpy(d_list, h_list, nActiveBlock*sizeof(uint32_t));
 
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class solve>(
@@ -171,18 +171,18 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
 
     q.memcpy(h_listVol, d_listVol, blockNum*sizeof(bool)).wait();
 
-    uint nOldActiveBlock = nActiveBlock;
-    uint nBlkX = xdim/BLOCK_LENGTH;
-    uint nBlkY = ydim/BLOCK_LENGTH;
+    uint32_t nOldActiveBlock = nActiveBlock;
+    uint32_t nBlkX = xdim/BLOCK_LENGTH;
+    uint32_t nBlkY = ydim/BLOCK_LENGTH;
 
-    for(uint i=0; i<nOldActiveBlock; i++)
+    for(uint32_t i=0; i<nOldActiveBlock; i++)
     {
       // check 6-neighbor of current active tile
-      uint currBlkIdx = h_list[i];
+      uint32_t currBlkIdx = h_list[i];
 
       if(!h_listVol[currBlkIdx]) // not active : converged
       {
-        uint nb[6];
+        uint32_t nb[6];
         nb[0] = (currBlkIdx < nBlkX*nBlkY) ? currBlkIdx : (currBlkIdx - nBlkX*nBlkY);  //tp
         nb[1] = ((currBlkIdx + nBlkX*nBlkY) >= blockNum) ? currBlkIdx : (currBlkIdx + nBlkX*nBlkY); //bt
         nb[2] = (currBlkIdx < nBlkX) ? currBlkIdx : (currBlkIdx - nBlkX); //up
@@ -192,7 +192,7 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
 
         for(int nbIdx = 0; nbIdx < 6; nbIdx++)
         {
-          uint currIdx = nb[nbIdx];
+          uint32_t currIdx = nb[nbIdx];
 
           //  assert(currIdx < volSize);
 
@@ -228,7 +228,7 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
       printf("Grid size : %d x %d\n", grids[2], grids[1]);
 #endif
 
-    q.memcpy(d_list, h_list, nActiveBlock*sizeof(uint)).wait();
+    q.memcpy(d_list, h_list, nActiveBlock*sizeof(uint32_t)).wait();
 
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class check_neighbor>(
@@ -274,7 +274,7 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
     nActiveBlock = 0;
     q.memcpy(h_listVol, d_listVol, blockNum*sizeof(bool)).wait();
 
-    for(uint i=0; i<blockNum; i++)
+    for(uint32_t i=0; i<blockNum; i++)
     {
       if(h_listVol[i]) // true : active block (not converged)
       {

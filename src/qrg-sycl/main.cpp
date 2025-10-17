@@ -177,6 +177,7 @@ int main(int argc, const char **argv)
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (qrng): %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   printf("\nRead back results...\n");
   q.memcpy(h_OutputGPU, d_Output, sizeof(float)*QRNG_DIMENSIONS*N).wait();
@@ -235,6 +236,7 @@ int main(int argc, const char **argv)
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (icnd): %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
   printf("\nRead back results...\n");
 
   q.memcpy(h_OutputGPU, d_Output, sizeof(float)*QRNG_DIMENSIONS*N).wait();

@@ -83,6 +83,7 @@ void atomicCost (int length, int size, int repeat)
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of WithAtomicOnGlobalMem: %f (us)\n",
           time * 1e-3f / repeat);
+  fflush(stdout);
   q.memcpy(result_wi, d_result_wi, result_size).wait();
 
   start = std::chrono::steady_clock::now();
@@ -100,6 +101,7 @@ void atomicCost (int length, int size, int repeat)
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of WithoutAtomicOnGlobalMem: %f (us)\n",
           time * 1e-3f / repeat);
+  fflush(stdout);
   q.memcpy(result_wo, d_result_wo, result_size).wait();
 
   int diff = memcmp(result_wi, result_wo, result_size);

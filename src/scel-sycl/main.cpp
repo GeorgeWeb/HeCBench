@@ -136,6 +136,7 @@ int main(int argc, char* argv[])
       auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
       printf("Average execution time of SigmoidCrossEntropyWithLogits kernel: %f (us)\n",
              (time * 1e-3f) / repeat);
+      fflush(stdout);
 
       q.memcpy(h_out, d_out, output_size_bytes).wait();
 

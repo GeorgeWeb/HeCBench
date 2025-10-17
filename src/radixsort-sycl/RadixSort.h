@@ -16,19 +16,19 @@
 #include <sycl/sycl.hpp>
 #include "Scan.h"
 
-static const uint WARP_SIZE = 32;
-static const uint bitStep = 4;
-static const uint CTA_SIZE = 128;
+static const uint32_t WARP_SIZE = 32;
+static const uint32_t bitStep = 4;
+static const uint32_t CTA_SIZE = 128;
 
 void radixSortKeys(sycl::queue &q,
-                   uint *d_keys,
-                   uint *d_tempKeys,
-                   uint *d_counters,
-                   uint *d_blockOffsets,
-                   uint *d_countersSum,
-                   uint *d_buffer,
-                   const uint numElements,
-                   const uint keyBits,
-                   const uint batchSize);
+                   uint32_t *d_keys,
+                   uint32_t *d_tempKeys,
+                   uint32_t *d_counters,
+                   uint32_t *d_blockOffsets,
+                   uint32_t *d_countersSum,
+                   uint32_t *d_buffer,
+                   const uint32_t numElements,
+                   const uint32_t keyBits,
+                   const uint32_t batchSize);
 
 #endif

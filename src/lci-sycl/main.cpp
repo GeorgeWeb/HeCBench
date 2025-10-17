@@ -106,6 +106,7 @@ int main (int argc, char* argv[]) {
     initial(c, ++seed);
   }
   printf("Total kernel execution time %f (s)\n", total_time * 1e-9f);
+  fflush(stdout);
 
 #ifdef DUMP
   fclose (outdata);

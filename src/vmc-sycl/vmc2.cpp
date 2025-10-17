@@ -310,6 +310,7 @@ int main(int argc, char* argv[]) {
          100.0*naccept/double(Npoint)/double(Ngen_per_block)/double(Nsample));
 
   printf("Average execution time of kernels: %f (s)\n", (time * 1e-9f) / Nsample);
+  fflush(stdout);
 
   sycl::free(d_x1, q);
   sycl::free(d_y1, q);

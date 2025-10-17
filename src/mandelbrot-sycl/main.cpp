@@ -40,7 +40,7 @@ void Execute(sycl::queue &q) {
   std::cout << std::setw(20) << "Average parallel time: "
                              << (parallel_time / repetitions).count() * 1e3 << " ms\n";
   std::cout << std::setw(20) << "Average kernel execution time: "
-                             << kernel_time / repetitions * 1e3 << " ms\n";
+                             << kernel_time / repetitions * 1e3 << " ms" << std::endl << std::flush;
 
   // Validating
   m_par.Verify(m_ser);

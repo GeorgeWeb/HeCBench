@@ -25,7 +25,7 @@ float compute_dt_sch(const float *coefx, const float *coefy, const float *coefz)
 {
   float ftmp = 0.f;
   ftmp += fabsf(coefx[0]) + fabsf(coefy[0]) + fabsf(coefz[0]);
-  for (uint i = 1; i < 5; i++) {
+  for (uint32_t i = 1; i < 5; i++) {
     ftmp += 2.f*fabsf(coefx[i]);
     ftmp += 2.f*fabsf(coefy[i]);
     ftmp += 2.f*fabsf(coefz[i]);
@@ -33,13 +33,13 @@ float compute_dt_sch(const float *coefx, const float *coefy, const float *coefz)
   return 2.f*cfl/(sqrtf(ftmp)*vmax);
 }
 
-void gaussian_source(uint nt, float dt, float *__restrict__ source)
+void gaussian_source(uint32_t nt, float dt, float *__restrict__ source)
 {
   const float sigma = 0.6f*_fmax;
   const float tau = 1.0f;
   const float scale = 8.0f;
 
-  for (uint it = 1; it <= nt; ++it) {
+  for (uint32_t it = 1; it <= nt; ++it) {
     float t = dt*(it-1);
     source[it-1] = -2.f*scale*sigma
       *(sigma-2.f*sigma*scale*POW2(sigma*t-tau))
@@ -47,7 +47,7 @@ void gaussian_source(uint nt, float dt, float *__restrict__ source)
   }
 }
 
-void write_io(struct grid_t grid, const float *u, uint istep)
+void write_io(struct grid_t grid, const float *u, uint32_t istep)
 {
     char filename_buf[32];
     snprintf(filename_buf, sizeof(filename_buf), "snapshot.it%u.n%llu.raw", istep, grid.nz);
@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
   llint nx = 100, ny = 100, nz = 100;
   /* Task size (supported targets only) */
   llint tsx = 10, tsy = 10;
-  uint nsteps = 1000;
-  uint niters = 1;
+  uint32_t nsteps = 1000;
+  uint32_t niters = 1;
   bool disable_warm_up_iter = true;
   bool finalio = false;
 
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
   sycl::queue q(sycl::cpu_selector_v, sycl::property::queue::in_order());
 #endif
 
-  for (uint iiter = 0; iiter < (disable_warm_up_iter ? niters : niters+1); iiter++) {
+  for (uint32_t iiter = 0; iiter < (disable_warm_up_iter ? niters : niters+1); iiter++) {
 
     const struct grid_t grid = init_grid(nx,ny,nz,tsx,tsy);
 

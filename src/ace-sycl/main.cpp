@@ -14,6 +14,9 @@ typedef double nRarray[DATAYSIZE][DATAZSIZE];
 // square
 #define SQ(x) ((x)*(x))
 
+#define VERIFY 1
+#define USE_GPU 1
+
 #ifdef VERIFY
 #include <string.h>
 #include "reference.h"
@@ -381,9 +384,14 @@ int main(int argc, char *argv[])
   int t = 0;
 
   q.wait();
+
+  std::cout << "Starting ...\n";
+
   auto start = std::chrono::steady_clock::now();
 
   while (t <= num_steps) {
+
+    std::cout << "Timestep: " << t << "\n";
 
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class calc_force>(
@@ -396,6 +404,8 @@ int main(int argc, char *argv[])
                        item);
       });
     });
+
+    std::cout << "Submitted enqueue  1\n";
 
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class allen_cahn>(
@@ -412,12 +422,16 @@ int main(int argc, char *argv[])
       });
     });
 
+    std::cout << "Submitted enqueue 2\n";
+
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class bc_phi>(
         sycl::nd_range<3>(gws, lws), [=] (sycl::nd_item<3> item) {
         boundaryConditionsPhi(d_phinew, item);
       });
     });
+
+    std::cout << "Submitted enqueue 3\n";
 
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class thermal_equation>(
@@ -431,12 +445,16 @@ int main(int argc, char *argv[])
       });
     });
 
+    std::cout << "Submitted enqueue 4\n";
+
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class bc_u>(
         sycl::nd_range<3>(gws, lws), [=] (sycl::nd_item<3> item) {
         boundaryConditionsU(d_unew, delta, item);
       });
     });
+
+    std::cout << "Submitted enqueue 5\n";
 
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class swap_phi>(
@@ -445,12 +463,16 @@ int main(int argc, char *argv[])
       });
     });
 
+    std::cout << "Submitted enqueue 6\n";
+
     q.submit([&] (sycl::handler &cgh) {
       cgh.parallel_for<class swap_u>(
         sycl::nd_range<3>(gws, lws), [=] (sycl::nd_item<3> item) {
         swapGrid(d_unew, d_uold, item);
       });
     });
+
+    std::cout << "Submitted enqueue 7\n";
 
     t++;
   }
@@ -459,6 +481,7 @@ int main(int argc, char *argv[])
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time: %.3f (ms)\n", time * 1e-6f);
+  fflush(stdout);
 
   q.memcpy(phi_host, d_phiold, vol_in_bytes);
   q.memcpy(u_host, d_uold, vol_in_bytes);
@@ -475,6 +498,7 @@ int main(int argc, char *argv[])
   auto offload_end = std::chrono::steady_clock::now();
   auto offload_time = std::chrono::duration_cast<std::chrono::nanoseconds>(offload_end - offload_start).count();
   printf("Offload time: %.3f (ms)\n", offload_time * 1e-6f);
+  fflush(stdout);
 
 #ifdef VERIFY
   bool ok = true;

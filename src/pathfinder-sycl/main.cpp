@@ -57,7 +57,8 @@ int main(int argc, char** argv)
   }
   else
   {
-    printf("Usage: %s <column length> <row length> <pyramid_height>\n", argv[0]);
+    printf("Usage: %s <column length> <row length> <pyramid_height>\n", argv[0]);
+
     exit(0);
   }
 
@@ -154,6 +155,7 @@ int main(int argc, char** argv)
   q.wait();
   double kend = get_time();
   printf("Total kernel execution time: %lf (s)\n", kend - kstart);
+  fflush(stdout);
 
   q.memcpy(result, d_gpuSrc, sizeof(int)*cols);
   q.memcpy(outputBuffer, d_outputBuffer, sizeof(int)*16348);

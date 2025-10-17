@@ -53,7 +53,7 @@ typedef enum {
 static const char *RA_TYPE_NAMES[] = {
     "user",
     "int",
-    "uint",
+    "uint32_t",
     "float",
     "complex" };
 

@@ -91,6 +91,7 @@ void mixbenchGPU(long size, int repeat) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time: %f (s)\n", time * 1e-9f);
+  fflush(stdout);
   
   q.memcpy(cd, d_cd, sizeof(float) * size).wait();
   sycl::free(d_cd, q);

@@ -329,6 +329,7 @@ int main(int argc, char** argv) {
   auto end = std::chrono::high_resolution_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("fpc: average device offload time %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   // warmup
   fpc2(q, values, &cmp_size_hw, values_size, wgs);
@@ -347,6 +348,7 @@ int main(int argc, char** argv) {
   end = std::chrono::high_resolution_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("fpc2: average device offload time %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   printf("%s\n", ok ? "PASS" : "FAIL");
 

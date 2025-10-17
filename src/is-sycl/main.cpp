@@ -328,6 +328,7 @@ int main(int argc, char** argv){
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the rank kernels %f (s)\n",
          (time * 1e-9f) / MAX_ITERATIONS);
+  fflush(stdout);
 
   q.memcpy(&passed_verification, passed_verification_device, sizeof(int));
 

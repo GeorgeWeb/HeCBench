@@ -20,6 +20,7 @@ void eval_case(sycl::queue &q, T* d_in, T* h_in, T* d_out, T* h_out,
   for (int i = 0; i < repeat; i++)
     time += reverse(d_out, d_in, nrows, ncols, rowMajor, alongRows, q);
   printf("Average kernel execution time: %f (ms)\n", time * 1e-6f / repeat);
+  fflush(stdout);
 
 #ifdef DEBUG
   q.memcpy(h_out, d_out, elem_size).wait();
@@ -88,8 +89,8 @@ int main(int argc, char* argv[]) {
   eval<unsigned char>(q, nrows, ncols, repeat);
   printf("\nThe size of each matrix element is %zu bytes\n", sizeof(ushort));
   eval<ushort>(q, nrows, ncols, repeat);
-  printf("\nThe size of each matrix element is %zu bytes\n", sizeof(uint));
-  eval<uint>(q, nrows, ncols, repeat);
+  printf("\nThe size of each matrix element is %zu bytes\n", sizeof(uint32_t));
+  eval<uint32_t>(q, nrows, ncols, repeat);
   printf("\nThe size of each matrix element is %zu bytes\n", sizeof(ulong));
   eval<ulong>(q, nrows, ncols, repeat);
 

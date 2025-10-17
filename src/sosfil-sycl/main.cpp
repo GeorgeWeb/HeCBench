@@ -194,6 +194,7 @@ void filtering (sycl::queue &q, const int repeat,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %lf (s)\n", time * 1e-9 / repeat);
+  fflush(stdout);
 
   q.memcpy(x, d_x, sizeof(T) * x_size).wait();
 

@@ -108,6 +108,7 @@ void tsa(sycl::queue &q, int width, int height, int repeat) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(p_real, d_real[sense], matrix_size).wait();
   q.memcpy(p_imag, d_imag[sense], matrix_size).wait();

@@ -134,12 +134,14 @@ int main(int argc, char *argv[])
 
   runtime = endtime.tv_sec + endtime.tv_usec / 1000000.0 - starttime.tv_sec - starttime.tv_usec / 1000000.0;
   printf("%.6lf\t#runtime [s]\n", runtime / REPEAT);
+  fflush(stdout);
 
   q.memcpy(best, d_best, sizeof(int) * (FSMSIZE * 2 + 3)).wait();
 
   besthits = best[1];
   generations = best[2];
   printf("%.6lf\t#throughput [Gtr/s]\n", 0.000000001 * POPSIZE * generations * length / (runtime / REPEAT));
+  fflush(stdout);
 
   // evaluate saturating up/down counter
   for (i = 0; i < FSMSIZE; i++) {

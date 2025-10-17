@@ -200,6 +200,7 @@ bool fdtdGPU(float *output, const float *input, const float *coeff,
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average kernel execution time %f (s)\n", (time * 1e-9f) / timesteps);
+    fflush(stdout);
 
     // Read the result back, result is in bufferSrc (after final toggle)
     q.memcpy(output, d_input + padding, volumeSize * sizeof(float)).wait();

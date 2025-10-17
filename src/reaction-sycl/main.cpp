@@ -262,6 +262,7 @@ int main(int argc, char* argv[]) {
   std::chrono::duration<double> elapsed_seconds = end-start;
   printf("timesteps: %d\n", timesteps);
   printf("Total kernel execution time:     %12.3f s\n\n", elapsed_seconds.count());
+  fflush(stdout);
 
   // copy results back
   q.memcpy(a, d_a, bytes);

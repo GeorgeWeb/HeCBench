@@ -244,6 +244,7 @@ int main(int argc, char* argv[])
   free(output_img);
 
   printf("Average kernel execution time : %f (us)\n", time * 1e-3 / repeat);
+  fflush(stdout);
   printf("Kernel checksum: %lf\n", checksum);
   return 0;
 }

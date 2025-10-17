@@ -1071,6 +1071,7 @@ frna_t frna_new(const char *str, fparam_t par)
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time %f (s)\n", time * 1e-9f);
+  fflush(stdout);
 
   q.memcpy(p->v, d_v, n*n*sizeof(int_t));
   q.memcpy(p->w, d_w, n*n*sizeof(int_t));

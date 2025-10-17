@@ -17,19 +17,19 @@
 //----------------------------------------------------------------------------
 void radixSortBlocksKeysOnly(
     sycl::queue &q,
-    uint *d_keys,
-    uint *d_tempKeys,
-    const uint nbits,
-    const uint startbit,
-    const uint numElements)
+    uint32_t *d_keys,
+    uint32_t *d_tempKeys,
+    const uint32_t nbits,
+    const uint32_t startbit,
+    const uint32_t numElements)
 {
-  uint totalBlocks = numElements/4/CTA_SIZE;
+  uint32_t totalBlocks = numElements/4/CTA_SIZE;
   sycl::range<1> gws (CTA_SIZE*totalBlocks);
   sycl::range<1> lws (CTA_SIZE);
 
   q.submit([&] (sycl::handler &cgh) {
-    sycl::local_accessor<uint, 1> sMem(sycl::range<1>(4*CTA_SIZE), cgh);
-    sycl::local_accessor<uint, 0> numtrue(cgh);
+    sycl::local_accessor<uint32_t, 1> sMem(sycl::range<1>(4*CTA_SIZE), cgh);
+    sycl::local_accessor<uint32_t, 0> numtrue(cgh);
     cgh.parallel_for<class radixSort_blocksKeys>(
       sycl::nd_range<1>(gws, lws), [=] (sycl::nd_item<1> item) {
       radixSortBlocksKeysK(item, d_keys, d_tempKeys,
@@ -40,20 +40,20 @@ void radixSortBlocksKeysOnly(
 
 void findRadixOffsets(
   sycl::queue &q,
-  uint *d_tempKeys,
-  uint *d_counters,
-  uint *d_blockOffsets,
-  const uint startbit,
-  const uint numElements)
+  uint32_t *d_tempKeys,
+  uint32_t *d_counters,
+  uint32_t *d_blockOffsets,
+  const uint32_t startbit,
+  const uint32_t numElements)
 {
-  uint totalBlocks = numElements/2/CTA_SIZE;
+  uint32_t totalBlocks = numElements/2/CTA_SIZE;
 
   sycl::range<1> gws (CTA_SIZE*totalBlocks);
   sycl::range<1> lws (CTA_SIZE);
 
   q.submit([&] (sycl::handler &cgh) {
-    sycl::local_accessor<uint, 1> sRadix1(sycl::range<1>(2*CTA_SIZE), cgh);
-    sycl::local_accessor<uint, 1> sStartPointers(sycl::range<1>(16), cgh);
+    sycl::local_accessor<uint32_t, 1> sRadix1(sycl::range<1>(2*CTA_SIZE), cgh);
+    sycl::local_accessor<uint32_t, 1> sStartPointers(sycl::range<1>(16), cgh);
     cgh.parallel_for<class find_radix_Offsets>(
       sycl::nd_range<1>(gws, lws), [=] (sycl::nd_item<1> item) {
       findRadixOffsetsK(item, d_tempKeys, d_counters,
@@ -66,21 +66,21 @@ void findRadixOffsets(
 
 void reorderDataKeysOnly(
    sycl::queue  &q,
-   uint *d_keys,
-   uint *d_tempKeys,
-   uint *d_blockOffsets,
-   uint *d_countersSum,
-   const uint startbit,
-   const uint numElements)
+   uint32_t *d_keys,
+   uint32_t *d_tempKeys,
+   uint32_t *d_blockOffsets,
+   uint32_t *d_countersSum,
+   const uint32_t startbit,
+   const uint32_t numElements)
 {
-  uint totalBlocks = numElements/2/CTA_SIZE;
+  uint32_t totalBlocks = numElements/2/CTA_SIZE;
   sycl::range<1> gws (CTA_SIZE*totalBlocks);
   sycl::range<1> lws (CTA_SIZE);
 
   q.submit([&] (sycl::handler &cgh) {
-    sycl::local_accessor<uint, 1> sKeys1(sycl::range<1>(2*CTA_SIZE), cgh);
-    sycl::local_accessor<uint, 1> sOffsets(sycl::range<1>(16), cgh);
-    sycl::local_accessor<uint, 1> sBlockOffsets(sycl::range<1>(16), cgh);
+    sycl::local_accessor<uint32_t, 1> sKeys1(sycl::range<1>(2*CTA_SIZE), cgh);
+    sycl::local_accessor<uint32_t, 1> sOffsets(sycl::range<1>(16), cgh);
+    sycl::local_accessor<uint32_t, 1> sBlockOffsets(sycl::range<1>(16), cgh);
     cgh.parallel_for<class reorder_data_keys_only>(
       sycl::nd_range<1>(gws, lws), [=] (sycl::nd_item<1> item) {
       reorderDataKeysOnlyK(item,
@@ -103,16 +103,16 @@ void reorderDataKeysOnly(
 // starting at startbit.
 //----------------------------------------------------------------------------
 void radixSortStepKeysOnly(sycl::queue &q,
-                           uint *d_keys,
-                           uint *d_tempKeys,
-                           uint *d_counters,
-                           uint *d_blockOffsets,
-                           uint *d_countersSum,
-                           uint *d_buffer,
-                           const uint nbits,
-                           const uint startbit,
-                           const uint numElements,
-                           const uint batchSize)
+                           uint32_t *d_keys,
+                           uint32_t *d_tempKeys,
+                           uint32_t *d_counters,
+                           uint32_t *d_blockOffsets,
+                           uint32_t *d_countersSum,
+                           uint32_t *d_buffer,
+                           const uint32_t nbits,
+                           const uint32_t startbit,
+                           const uint32_t numElements,
+                           const uint32_t batchSize)
 {
   // Four step algorithms from Satish, Harris & Garland
   radixSortBlocksKeysOnly(q, d_keys, d_tempKeys, nbits, startbit, numElements);
@@ -132,15 +132,15 @@ void radixSortStepKeysOnly(sycl::queue &q,
 // radix counters.
 //----------------------------------------------------------------------------
 void radixSortKeys(sycl::queue &q,
-                   uint *d_keys,
-                   uint *d_tempKeys,
-                   uint *d_counters,
-                   uint *d_blockOffsets,
-                   uint *d_countersSum,
-                   uint *d_buffer,
-                   const uint numElements,
-                   const uint keyBits,
-                   const uint batchSize)
+                   uint32_t *d_keys,
+                   uint32_t *d_tempKeys,
+                   uint32_t *d_counters,
+                   uint32_t *d_blockOffsets,
+                   uint32_t *d_countersSum,
+                   uint32_t *d_buffer,
+                   const uint32_t numElements,
+                   const uint32_t keyBits,
+                   const uint32_t batchSize)
 {
   int i = 0;
   while (keyBits > i*bitStep)

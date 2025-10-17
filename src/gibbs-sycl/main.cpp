@@ -356,7 +356,9 @@ int main(int argc, char *argv[]) {
   }
 
   printf("Average execution time of kernels: %f (us)\n", (total_time * 1e-3f) / trials);
+  fflush(stdout);
   printf("a = %lf (avg), b = %lf (avg)\n", mean_a / trials, mean_b / trials);
+  fflush(stdout);
 
   /*------ Free Memory -------------------------------------------*/
   free(devStates, q);

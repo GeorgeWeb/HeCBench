@@ -170,6 +170,7 @@ void layer(int repeat) {
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of AddBiasResidualLayerNorm (%d x %d): %f (us)\n",
            m, n, (time * 1e-3f) / repeat);
+    fflush(stdout);
 
     q.memcpy(h_output, d_output, output_size_bytes).wait();
 

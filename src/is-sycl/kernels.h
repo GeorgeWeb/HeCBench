@@ -261,7 +261,7 @@ void rank_gpu_kernel_4(
   for(int i=start; i<end; i+=size){
     shared_data[position] = source[i + lid];
 
-    for(uint offset=1; offset<size; offset<<=1){
+    for(uint32_t offset=1; offset<size; offset<<=1){
       syncthreads();
       int t = shared_data[position] + shared_data[position - offset];
       syncthreads();
@@ -291,7 +291,7 @@ void rank_gpu_kernel_5(
   int position = size + lid;
   shared_data[position] = source[lid];
 
-  for(uint offset=1; offset<size; offset<<=1) {
+  for(uint32_t offset=1; offset<size; offset<<=1) {
     syncthreads();
     int t = shared_data[position] + shared_data[position - offset];
     syncthreads();

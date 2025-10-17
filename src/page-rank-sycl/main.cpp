@@ -248,6 +248,7 @@ int main(int argc, char *argv[]) {
   fprintf(stderr, "Max difference %f is reached at iteration %d\n", max_diff, t);
   printf("\"Options\": \"-n %d -i %d -t %f\". Total kernel execution time: %lf (s)\n",
          n, iter, thresh, ktime);
+  fflush(stdout);
 
   memset(diffs, 0, rank_size);
   for (t=1; t<=iter && max_diff_ref>=thresh; ++t) {

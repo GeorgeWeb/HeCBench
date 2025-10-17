@@ -1,28 +1,28 @@
 void malvar_he_cutler_demosaic (
   nd_item<2> &item,
   LDSPixelT *__restrict apron,
-  const uint height,
-  const uint width,
+  const uint32_t height,
+  const uint32_t width,
   const uchar *__restrict input_image_p,
-  const uint input_image_pitch, 
+  const uint32_t input_image_pitch, 
         uchar *__restrict output_image_p,
-  const uint output_image_pitch, 
+  const uint32_t output_image_pitch, 
   const int bayer_pattern )
 {
-  const uint tile_col_blocksize = item.get_local_range(1);
-  const uint tile_row_blocksize = item.get_local_range(0);
-  const uint tile_col_block = item.get_group(1);
-  const uint tile_row_block = item.get_group(0);
-  const uint tile_col = item.get_local_id(1);
-  const uint tile_row = item.get_local_id(0);
-  const uint g_c = item.get_global_id(1);
-  const uint g_r = item.get_global_id(0);
+  const uint32_t tile_col_blocksize = item.get_local_range(1);
+  const uint32_t tile_row_blocksize = item.get_local_range(0);
+  const uint32_t tile_col_block = item.get_group(1);
+  const uint32_t tile_row_block = item.get_group(0);
+  const uint32_t tile_col = item.get_local_id(1);
+  const uint32_t tile_row = item.get_local_id(0);
+  const uint32_t g_c = item.get_global_id(1);
+  const uint32_t g_r = item.get_global_id(0);
   const bool valid_pixel_task = (g_r < height) & (g_c < width);
 
-  const uint tile_flat_id = tile_row * tile_cols + tile_col;
-  for(uint apron_fill_task_id = tile_flat_id; apron_fill_task_id < n_apron_fill_tasks; apron_fill_task_id += n_tile_pixels){
-    const uint apron_read_row = apron_fill_task_id / apron_cols;
-    const uint apron_read_col = apron_fill_task_id % apron_cols;
+  const uint32_t tile_flat_id = tile_row * tile_cols + tile_col;
+  for(uint32_t apron_fill_task_id = tile_flat_id; apron_fill_task_id < n_apron_fill_tasks; apron_fill_task_id += n_tile_pixels){
+    const uint32_t apron_read_row = apron_fill_task_id / apron_cols;
+    const uint32_t apron_read_col = apron_fill_task_id % apron_cols;
     const int ag_c = ((int)(apron_read_col + tile_col_block * tile_col_blocksize)) - shalf_ksize;
     const int ag_r = ((int)(apron_read_row + tile_row_block * tile_row_blocksize)) - shalf_ksize;
 
@@ -32,14 +32,14 @@ void malvar_he_cutler_demosaic (
   item.barrier(access::fence_space::local_space);
 
   //valid tasks read from [half_ksize, (tile_rows|tile_cols) + kernel_size - 1)
-  const uint a_c = tile_col + half_ksize;
-  const uint a_r = tile_row + half_ksize;
+  const uint32_t a_c = tile_col + half_ksize;
+  const uint32_t a_r = tile_row + half_ksize;
   assert_val(a_c >= half_ksize && a_c < apron_cols - half_ksize, a_c);
   assert_val(a_r >= half_ksize && a_r < apron_rows - half_ksize, a_r);
 
   //note the following formulas are col, row convention and uses i,j - this is done to preserve readability with the originating paper
-  const uint i = a_c;
-  const uint j = a_r;
+  const uint32_t i = a_c;
+  const uint32_t j = a_r;
 #define F(_i, _j) apron_pixel((_j), (_i))
 
   const int Fij = F(i,j);

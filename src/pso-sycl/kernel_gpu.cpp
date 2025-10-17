@@ -128,6 +128,7 @@ extern "C" void gpu_pso(int p, int r,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (us)\n", time * 1e-3f / r);
+  fflush(stdout);
 
   q.memcpy(gBest,devGBest,res_size_byte);
   q.memcpy(pBests,devPBest,size_byte);

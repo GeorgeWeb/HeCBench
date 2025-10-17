@@ -8,6 +8,13 @@ import json
 import logging
 import traceback
 
+# import pdb; pdb.set_trace()
+import locale
+from pathlib import Path
+
+import platform
+is_windows = any(platform.win32_ver())
+
 def await_input(prompt: str, is_valid_input) -> str:
     """ Wait the user for input until it is valid. """
     r = input(prompt)
@@ -19,7 +26,8 @@ class Benchmark:
     def __init__(self, args, name, res_regex, run_args = [], binary = "main", invert = False):
         if name.endswith('sycl'):
             logging.info(f"Type of SYCL device to use: {args.sycl_type}")
-            self.MAKE_ARGS = ['GCC_TOOLCHAIN="{}"'.format(args.gcc_toolchain)]
+            self.MAKE_ARGS = []
+            #self.MAKE_ARGS.append('GCC_TOOLCHAIN="{}"'.format(args.gcc_toolchain))
             if args.sycl_type == 'cuda':
                 self.MAKE_ARGS.append('CUDA=yes')
                 self.MAKE_ARGS.append('CUDA_ARCH=sm_{}'.format(args.nvidia_sm))
@@ -58,8 +66,10 @@ class Benchmark:
 
         if args.bench_dir:
             self.path = os.path.realpath(os.path.join(args.bench_dir, name))
+            #self.path = (Path(args.bench_dir) / name).resolve()
         else:
             self.path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', name)
+            #self.path = Path(__file__).resolve().parent.parent / name
 
         self.name = name
         self.binary = binary
@@ -70,15 +80,18 @@ class Benchmark:
         self.verbose = args.verbose
 
     def compile(self, shared_data):
+        #if is_windows:
+            #return
+        make = "make"
         if self.clean:
-            subprocess.run(["make", "clean"], cwd=self.path).check_returncode()
+            subprocess.run([make, "clean"], cwd=self.path).check_returncode()
             time.sleep(1) # required to make sure clean is done before building, despite run waiting on the invoked executable
 
         out = subprocess.DEVNULL
         if self.verbose:
             out = subprocess.PIPE
 
-        proc = subprocess.run(["make"] + self.MAKE_ARGS, cwd=self.path,
+        proc = subprocess.run([make] + self.MAKE_ARGS, cwd=self.path,
                               stdout=out, stderr=subprocess.STDOUT, encoding="utf-8")
 
         try:
@@ -91,7 +104,7 @@ class Benchmark:
 
             print("*****************************************************************************************")
             print("Description of the compilation error:")
-            cause = subprocess.run(["make"] + self.MAKE_ARGS, cwd=self.path,
+            cause = subprocess.run([make] + self.MAKE_ARGS, cwd=self.path,
                                    check=False, capture_output=True, encoding="utf-8")
             print(cause.stdout)
             print(cause.stderr)
@@ -103,13 +116,27 @@ class Benchmark:
             print(proc.stdout)
 
     def run(self):
-        cmd = ["./" + self.binary] + self.args
+        if is_windows:
+            binary = os.path.join(self.path, self.binary)
+        else:
+            binary = self.binary
+        cmd = [binary] + self.args
+        print("Cmd: ", cmd)
+        print("Path: ", self.path)
+        encoding = locale.getpreferredencoding(False) # no setlocale
         proc = subprocess.run(cmd, cwd=self.path, timeout=600,
-                              stdout=subprocess.PIPE, encoding="utf-8")
-        out = proc.stdout
+                              stdout=subprocess.PIPE, encoding=encoding)
+        try:
+            proc.check_returncode()
+            out = proc.stdout
+        except subprocess.CalledProcessError as e:
+            out = None
+            print(f'Failed execution of {self.binary}.\n{e}')
+            if e.stderr:
+                print(e.stderr)
+
         if self.verbose:
             print(" ".join(cmd))
-            print(out)
         try:
              res = re.findall(self.res_regex, out)
         except re.error as e:
@@ -120,8 +147,10 @@ class Benchmark:
         if not res:
             raise Exception(self.path + ":\nno regex match for " + self.res_regex + " in\n" + out)
         res = sum([float(i) for i in res]) #in case of multiple outputs sum them (e.g. total time)
+        print("Sum: ", res)
         if self.invert:
             res = 1/res
+        print("Res: ", res)
         return res
 
 
@@ -172,6 +201,10 @@ def main():
                         help='List of failing benchmarks to ignore')
     parser.add_argument('bench', nargs='+',
                         help='Either specific benchmark name or sycl, cuda, or hip')
+    parser.add_argument('--skip-compile', action='store_true',
+                        help='Skip the compilation step.')
+    parser.add_argument('--skip-run', action='store_true',
+                        help='Skip the run step.')
 
     args = parser.parse_args()
 
@@ -182,9 +215,22 @@ def main():
     logging.basicConfig(format="%(asctime)s [%(levelname)s] -- %(message)s", level=numeric_level)
 
     # warn user before continuing
-    logging.warning("This script will compile and run selected benchmarks in HeCBench and gather results. " +
-        "It is recommended that before you run this script, the dataset are available for certain benchmarks " +
-        "and the compilers are in the PATH environment.") 
+    user_choice = None
+    if args.skip_compile and args.skip_run:
+        user_choice = ""
+    elif args.skip_compile:
+        user_choice = "run"
+    elif args.skip_run:
+        user_choice = "compile"
+    else:
+        user_choice = "compile and run"
+
+    if not user_choice:
+        logging.warning("Skipping compilation and running of the benchmarks.")
+    else:
+        logging.warning(f"This script will {user_choice} selected benchmarks in HeCBench and gather results. " +
+            "It is recommended that before you run this script, the dataset are available for certain benchmarks " +
+            "and the compilers are in the PATH environment.") 
 
     if not args.yes_prompt:
         response = await_input("Continue? [y/n] ", lambda r: r.lower() in ["y", "n", "yes", "no"])
@@ -243,19 +289,25 @@ def main():
         #    p.map(comp, benches)
         procs = []
         with multiprocessing.Manager() as m:
-           d = m.dict() # a shared dictionary (nested dictionary not supported)
-           for b in benches: 
-             p = multiprocessing.Process(target = comp, args = (b, d)) 
-             procs.append(p)
-             p.start()
+            d = m.dict() # a shared dictionary (nested dictionary not supported)
 
-           for p in procs:
-               p.join()
+            if not args.skip_compile:
+                for b in benches: 
+                    p = multiprocessing.Process(target = comp, args = (b, d)) 
+                    procs.append(p)
+                    p.start()
 
-           for k, v in d.items():
-               summary[k] = {}
-               summary[k]["compile"] = v;
-           
+                for p in procs:
+                    p.join()
+            else:
+                for b in benches:
+                    #shared_data[self.name] = "skipped"
+                    d[b.name] = "skipped"
+
+            for k, v in d.items():
+                summary[k] = {}
+                summary[k]["compile"] = v
+
     except Exception as e:
         print("Error compiling the benchmarks:")
         print(e)
@@ -290,25 +342,26 @@ def main():
             print(f"Filtered out {num_filtered_benches} benchmarks."
                   " Results already exists in the output file.", flush=True)
 
-    for i, b in enumerate(filtered_benches, 1):
-        if b.name not in summary.keys():
-            summary[b.name] = {}
-        try:
-            print(f"running {i}/{len(filtered_benches)}: {b.name}", flush=True)
+    if not args.skip_run:
+        for i, b in enumerate(filtered_benches, 1):
+            if b.name not in summary.keys():
+                summary[b.name] = {}
+            try:
+                print(f"running {i}/{len(filtered_benches)}: {b.name}", flush=True)
 
-            if args.warmup:
-                b.run()
+                if args.warmup:
+                    b.run()
 
-            res = []
-            for i in range(args.repeat):
-                res.append(str(b.run()))
+                res = []
+                for i in range(args.repeat):
+                    res.append(str(b.run()))
 
-            print(b.name + "," + ", ".join(res), file=outfile)
-            summary[b.name]["run"] = "success"
-        except Exception as e:
-            print("Error running: ", b.name)
-            print(e)
-            summary[b.name]["run"] = "failed"
+                print(b.name + "," + ", ".join(res), file=outfile)
+                summary[b.name]["run"] = "success"
+            except Exception as e:
+                print("Error running: ", b.name)
+                print(e)
+                summary[b.name]["run"] = "failed"
 
     if args.output:
         outfile.close()

@@ -159,13 +159,21 @@ void eval_remap(sycl::queue &q, const int N, const int repeat) {
   auto offload_time = std::chrono::duration_cast<std::chrono::nanoseconds>(offload_end - offload_start).count();
 
   printf("Average offload time: %f (s)\n", offload_time * 1e-9f / repeat);
+  fflush(stdout);
   printf("Average execution time of memory allocation : %f (us)\n", (alloc_time * 1e-3f) / repeat);
+  fflush(stdout);
   printf("Average execution time of memory deallocation : %f (us)\n", (dealloc_time * 1e-3f) / repeat);
+  fflush(stdout);
   printf("Average execution time of data copy : %f (us)\n", (copy_time * 1e-3f) / repeat);
+  fflush(stdout);
   printf("Average execution time of oneDPL sequence : %f (us)\n", (seq_time * 1e-3f) / repeat);
+  fflush(stdout);
   printf("Average execution time of oneDPL sort-by-key : %f (us)\n", (sort_time * 1e-3f) / repeat);
+  fflush(stdout);
   printf("Average execution time of oneDPL unique-by-key : %f (us)\n", (unique_time * 1e-3f) / repeat);
+  fflush(stdout);
   printf("Average execution time of remap kernel: %f (us)\n", (kernel_time * 1e-3f) / repeat);
+  fflush(stdout);
 
   int cs1 = 0, cs2 = 0;
   for (int i = 0; i < N-1; i++) {

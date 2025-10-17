@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of filter (shared memory) %lf (ms)\n",
          (time * 1e-6) / repeat);
-
+  fflush(stdout);
   bool match = check(q, d_nres, d_output, h_flt_count, h_output);
   printf("%s\n", match ? "PASS" : "FAIL");
 
@@ -199,7 +199,7 @@ int main(int argc, char **argv) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of filter (global aggregate) %lf (ms)\n",
          (time * 1e-6) / repeat);
-
+  fflush(stdout);
   match = check(q, d_nres, d_output, h_flt_count, h_output);
   printf("%s\n", match ? "PASS" : "FAIL");
 

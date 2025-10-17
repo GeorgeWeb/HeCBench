@@ -1,10 +1,10 @@
 /**********************************************************************
-  Copyright ©2013 Advanced Micro Devices, Inc. All rights reserved.
+  Copyright ï¿½2013 Advanced Micro Devices, Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-  •  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-  •  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
+  ï¿½  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+  ï¿½  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
   other materials provided with the distribution.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,13 +26,13 @@ void toneMapping(
     const float gamma,
     const float c,
     const float delta,
-    const uint width,
-    const uint numChannels,
-    const uint height,
+    const uint32_t width,
+    const uint32_t numChannels,
+    const uint32_t height,
     sycl::nd_item<2> &item)
 {
-  uint x = item.get_global_id(1);
-  uint y = item.get_global_id(0);
+  uint32_t x = item.get_global_id(1);
+  uint32_t y = item.get_global_id(0);
   float r, g, b;
   float cLPattanaik;
   float yLPattanaik;

@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-  std::cout << "Total device compute time: " << time * 1e-9 << " (s)\n";
+  std::cout << "Total device compute time: " << time * 1e-9 << " (s)" << std::endl << std::flush;
 
   std::cout << "Results:" << std::endl;
   std::cout << s << " "

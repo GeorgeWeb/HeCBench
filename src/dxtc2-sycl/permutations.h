@@ -14,7 +14,7 @@
 
 // From DXC CUDA sample
 
-static void computePermutations(uint permutations[1024])
+static void computePermutations(uint32_t permutations[1024])
 {
 	int indices[16];
 	int num = 0;
@@ -43,7 +43,7 @@ static void computePermutations(uint permutations[1024])
 				indices[j] = 1;
 			}
 
-			uint permutation = 0;
+			uint32_t permutation = 0;
 			
 			for(int p = 0; p < 16; p++) {
 				permutation |= indices[p] << (p * 2);
@@ -95,7 +95,7 @@ static void computePermutations(uint permutations[1024])
 					indices[k] = 1;
 				}
 				
-				uint permutation = 0;
+				uint32_t permutation = 0;
 
 				bool hasThree = false;
 				for(int p = 0; p < 16; p++) {

@@ -27,7 +27,7 @@ inline T bound( T x, T lower, T upper )
 }
 
 template<int N> inline 
-void __TEA_core( uint &v0, uint &v1, uint sum = 0 )
+void __TEA_core( uint32_t &v0, uint32_t &v1, uint32_t sum = 0 )
 {
   sum += _TEA_DT;
   v0 += ( ( v1 << 4 ) + _TEA_K0 ) ^ ( v1 + sum ) ^ ( ( v1 >> 5 ) + _TEA_K1 );
@@ -36,13 +36,13 @@ void __TEA_core( uint &v0, uint &v1, uint sum = 0 )
 }
 
 template<> inline 
-void __TEA_core<0>( uint &v0, uint &v1, uint sum ) {}
+void __TEA_core<0>( uint32_t &v0, uint32_t &v1, uint32_t sum ) {}
 
 template<int N> inline 
 float gaussian_TEA_fast( bool pred, int u, int v )
 {
-  uint v0 =  pred ? u : v;
-  uint v1 = !pred ? u : v;
+  uint32_t v0 =  pred ? u : v;
+  uint32_t v1 = !pred ? u : v;
   __TEA_core<N>( v0, v1 );
   float f = sycl::sinpi(int(v0) * float(_2_TO_MINUS_31));
   float r = sycl::sqrt(-2.0f * float(_LN_2) * sycl::log2(v1 * float(_2_TO_MINUS_32)));

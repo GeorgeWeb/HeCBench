@@ -176,6 +176,7 @@ void Test(sycl::queue &q, int num_items, int repeat)
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the kernels (thread block size = %4d): %f (us)\n",
          BLOCK_THREADS, (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   if (h_in) delete[] h_in;
   if (h_out) delete[] h_out;

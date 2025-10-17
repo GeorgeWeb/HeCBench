@@ -202,6 +202,7 @@ int main(int argc, char *argv[])
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (generate_nms_bitmap): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   /* Then we perform a reduction for generating a point bitmap vector */
   sycl::range<1> reduce_gws (ndetections * MAX_DETECTIONS / N_PARTITIONS);
@@ -234,6 +235,7 @@ int main(int argc, char *argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (reduce_nms_bitmap): %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   /* Dump detections after having performed the NMS */
   q.memcpy(cpu_pointsbitmap, pointsbitmap, pts_bm_size).wait();

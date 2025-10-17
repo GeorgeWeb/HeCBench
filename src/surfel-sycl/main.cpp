@@ -106,6 +106,7 @@ void surfelRenderTest(queue &q, int n, int w, int h, int repeat)
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average kernel execution time: %f (ms)\n", (time * 1e-6f) / repeat);
+    fflush(stdout);
 
     q.submit([&] (handler &cgh) {
       auto acc = d_dst.template get_access<sycl_read>(cgh);

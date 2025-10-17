@@ -25,3 +25,9 @@ main
 *.json
 !CMakePresets.json
 !CMakeUserPresets.json
+
+# Exclude potential local binaries
+*.exe
+*.ll
+*.bc
+*.spv

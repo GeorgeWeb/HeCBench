@@ -22,6 +22,8 @@
 #include <sycl/sycl.hpp>
 #include "streamcluster.h"
 
+#include "Utility.h"
+
 #ifdef USE_GPU
   sycl::queue q(sycl::gpu_selector_v, sycl::property::queue::in_order());
 #else

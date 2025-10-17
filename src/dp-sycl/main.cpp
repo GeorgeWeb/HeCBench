@@ -109,6 +109,7 @@ void dot (const size_t iNumElements, const int iNumIterations)
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (ms)\n", (time * 1e-6f) / iNumIterations);
+  fflush(stdout);
   q.memcpy(&dst, d_dst, sizeof(T)).wait();
   printf("%s\n\n", dst == T(0) ? "PASS" : "FAIL");
 

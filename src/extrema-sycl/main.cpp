@@ -237,6 +237,7 @@ int main(int argc, char* argv[]) {
 
   printf("\n-----------------------------------------------\n");
   printf("Total kernel execution time: %lf (s)", time * 1e-9);
+  fflush(stdout);
   printf("\n-----------------------------------------------\n");
 
   return 0;

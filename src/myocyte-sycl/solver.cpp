@@ -269,6 +269,7 @@ int solver(
   }
 
   printf("Total kernel execution time %f (s)\n\n", ktime_total * 1e-9f);
+  fflush(stdout);
 
   //========================================================================================================================
   //    FREE MEMORY

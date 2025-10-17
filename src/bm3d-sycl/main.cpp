@@ -88,9 +88,9 @@ int main(int argc, char** argv)
 
   //Denoising parameters and their shorthands
   Params h_hard_params(19, 8, 16, 2500, 3, 2.7f);
-  const uint k = h_hard_params.k;
-  const uint N = h_hard_params.N;
-  const uint p = h_hard_params.p;
+  const uint32_t k = h_hard_params.k;
+  const uint32_t N = h_hard_params.N;
+  const uint32_t p = h_hard_params.p;
 
   //Reserved sizes
   const int width = image.width();
@@ -127,7 +127,7 @@ int main(int argc, char** argv)
   ushort *d_stacks = sycl::malloc_device<ushort>(batch_size * N, q); 
 
   //Number of similar patches for each referenca patch of a batch that are stored in d_stacks
-  uint *d_num_patches_in_stack = sycl::malloc_device<uint>(batch_size, q);
+  uint32_t *d_num_patches_in_stack = sycl::malloc_device<uint32_t>(batch_size, q);
 
   //3D groups of a batch
   float *d_gathered_stacks = sycl::malloc_device<float>((N+1) * k * k * batch_size, q);
@@ -143,19 +143,19 @@ int main(int argc, char** argv)
 
   int paramN1 = N + 1; //maximal size of a stack with a reference patch
 
-  const uint p_block_width = (warpSize-1) * p + k;
-  const uint s_image_p_size = p_block_width * k * sizeof(unsigned char);
+  const uint32_t p_block_width = (warpSize-1) * p + k;
+  const uint32_t s_image_p_size = p_block_width * k * sizeof(unsigned char);
 
-  const uint shared_mem_available = TOTAL_SLM - s_image_p_size;
+  const uint32_t shared_mem_available = TOTAL_SLM - s_image_p_size;
 
   //Block-matching shared memory sizes per warp
-  const uint s_diff_size = p_block_width * sizeof(uint);
-  const uint s_patches_in_stack_size = warpSize * sizeof(unsigned char);
-  const uint s_patch_stacks_size = N * warpSize * sizeof(uint);
+  const uint32_t s_diff_size = p_block_width * sizeof(uint32_t);
+  const uint32_t s_patches_in_stack_size = warpSize * sizeof(unsigned char);
+  const uint32_t s_patch_stacks_size = N * warpSize * sizeof(uint32_t);
 
-  const uint num_warps = std::min(shared_mem_available / 
+  const uint32_t num_warps = std::min(shared_mem_available / 
     (s_diff_size + s_patches_in_stack_size + s_patch_stacks_size), MAX_NUM_WARPS);
-  uint lmem_size_bm = ((s_diff_size + s_patches_in_stack_size + s_patch_stacks_size) * num_warps) + 
+  uint32_t lmem_size_bm = ((s_diff_size + s_patches_in_stack_size + s_patch_stacks_size) * num_warps) + 
     s_image_p_size;    
 
   //Determine launch parameteres for the block match kernel
@@ -167,11 +167,11 @@ int main(int argc, char** argv)
   const sycl::range<2> gws (h_batch_size.y() * k, h_batch_size.x() * k);
 
   //Determine launch parameteres for the DCT kernel
-  const uint trans_size = k*k*paramN1*batch_size;
+  const uint32_t trans_size = k*k*paramN1*batch_size;
   const sycl::range<2> gws_tr (KER2_BLOCK_WIDTH/k, (trans_size + (KER2_BLOCK_WIDTH*k) - 1) / (KER2_BLOCK_WIDTH*k) * k);
   const sycl::range<2> lws_tr (KER2_BLOCK_WIDTH/k, k);
 
-  const uint s_size_t = k*k*(paramN1+1)*sizeof(float); //+1 for avoinding bank conflicts
+  const uint32_t s_size_t = k*k*(paramN1+1)*sizeof(float); //+1 for avoinding bank conflicts
 
   //Determine launch parameteres for final division kernel
   const sycl::range<2> lws_f(4, 64);
@@ -216,7 +216,7 @@ int main(int argc, char** argv)
   q.memcpy(d_kaiser_window, kaiserWindow.data(), k * k * sizeof(float));
 
   // Copy images to device
-  for(uint i = 0; i < channels; ++i) 
+  for(uint32_t i = 0; i < channels; ++i) 
     q.memcpy(d_noisy_image[i], image.data()+i*image_size, image_size * sizeof(unsigned char));
 
   q.wait();
@@ -256,7 +256,7 @@ int main(int argc, char** argv)
             lmem_size_bm           // Shared memory size in bytes
         );
 
-        for (uint channel = 0; channel < channels; ++channel)
+        for (uint32_t channel = 0; channel < channels; ++channel)
         {
           //Assembles 3D groups of a batch according to the d_stacks array
           run_get_block(
@@ -322,7 +322,7 @@ int main(int argc, char** argv)
     }
 
     //Divide numerator by denominator and save the result in output image
-    for (uint channel = 0; channel < channels; ++channel)
+    for (uint32_t channel = 0; channel < channels; ++channel)
     {
       run_aggregate_final(
           q,
@@ -342,7 +342,7 @@ int main(int argc, char** argv)
   double gpuTime = (double)elapsed_seconds.count();
   std::cout << "Average device execution time (s): " << gpuTime / REPEAT << std::endl;
 
-  for (uint channel = 0; channel < channels; ++channel) {
+  for (uint32_t channel = 0; channel < channels; ++channel) {
     q.memcpy(dst_image.data()+channel*image_size,
              d_denoised_image[channel],
             image_size*sizeof(unsigned char)).wait();

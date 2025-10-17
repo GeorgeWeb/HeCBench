@@ -255,6 +255,7 @@ void eval_mask (const int M, const int N, const int B, const int repeat) {
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of sequenceMask kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   print_mask_ratio(q, h_out, d_out, fill_val, data_size);
 
   windowMaskKernel_cpu(N, M, batch_dim, h_in, h_window, radius, fill_val, h_out);
@@ -276,6 +277,7 @@ void eval_mask (const int M, const int N, const int B, const int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of windowMask kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   print_mask_ratio(q, h_out, d_out, fill_val, data_size);
 
   upperMaskKernel_cpu(N, M, batch_dim, h_in, fill_val, h_out);
@@ -296,6 +298,7 @@ void eval_mask (const int M, const int N, const int B, const int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of upperMask kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   print_mask_ratio(q, h_out, d_out, fill_val, data_size);
 
   lowerMaskKernel_cpu(N, M, batch_dim, h_in, fill_val, h_out);
@@ -316,6 +319,7 @@ void eval_mask (const int M, const int N, const int B, const int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of lowerMask kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   print_mask_ratio(q, h_out, d_out, fill_val, data_size);
 
   upperDiagMaskKernel_cpu(N, M, batch_dim, h_in, fill_val, h_out);
@@ -336,6 +340,7 @@ void eval_mask (const int M, const int N, const int B, const int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of upperDiagMask kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   print_mask_ratio(q, h_out, d_out, fill_val, data_size);
 
   lowerDiagMaskKernel_cpu(N, M, batch_dim, h_in, fill_val, h_out);
@@ -356,6 +361,7 @@ void eval_mask (const int M, const int N, const int B, const int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of lowerDiagMask kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   print_mask_ratio(q, h_out, d_out, fill_val, data_size);
 
   sycl::free(d_in, q);

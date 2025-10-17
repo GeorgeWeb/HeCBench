@@ -191,6 +191,7 @@ int main(int argc, char* argv[])
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of select kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_out, d_out, output_size_bytes).wait();
   cube_select(b, n, radius, h_xyz, r_out);
@@ -210,6 +211,7 @@ int main(int argc, char* argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of select2 kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_out2, d_out2, 2 * output_size_bytes).wait();
   cube_select_two(b, n, radius, h_xyz, r_out2);
@@ -229,6 +231,7 @@ int main(int argc, char* argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of select4 kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_out4, d_out4, 4 * output_size_bytes).wait();
   cube_select_four(b, n, radius, h_xyz, r_out4);

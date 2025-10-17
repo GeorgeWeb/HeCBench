@@ -486,7 +486,7 @@ int main(int argc, char **argv) {
   const int num = atoi(argv[1]); // number of plain texts
   const int repeat = atoi(argv[2]);
 
-  uint seed = 8;
+  uint32_t seed = 8;
   srand(seed);
 
   // Initial 8-byte plain text
@@ -586,6 +586,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < num*8; i++) d_checksum += h_cipher[i];
   }
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   if (h_checksum != d_checksum)
     printf("FAIL\n");

@@ -123,6 +123,7 @@ void eval(sycl::queue &q, bool warmup, bool bGenericSharedMemory, const int repe
 
     if (!warmup)
       printf("Average kernel execution time: %lf ms\n", time * 1e-6 / repeat);
+      fflush(stdout);
 
     // Compare the results
     if (warmup) {

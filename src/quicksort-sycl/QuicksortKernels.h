@@ -42,18 +42,18 @@ void plus_prescan( T *a,  T *b) {
 /// bitonic_sort: sort 2*LOCAL_THREADCOUNT elements
 template <class T>
 
-void bitonic_sort( T* sh_data, const uint localid,
+void bitonic_sort( T* sh_data, const uint32_t localid,
                    const sycl::nd_item<1> &item)
 {
-  for (uint ulevel = 1; ulevel < LQSORT_LOCAL_WORKGROUP_SIZE; ulevel <<= 1) {
-    for (uint j = ulevel; j > 0; j >>= 1) {
-      uint pos = 2*localid - (localid & (j - 1));
+  for (uint32_t ulevel = 1; ulevel < LQSORT_LOCAL_WORKGROUP_SIZE; ulevel <<= 1) {
+    for (uint32_t j = ulevel; j > 0; j >>= 1) {
+      uint32_t pos = 2*localid - (localid & (j - 1));
 
-      uint direction = localid & ulevel;
-      uint av = sh_data[pos], bv = sh_data[pos + j];
+      uint32_t direction = localid & ulevel;
+      uint32_t av = sh_data[pos], bv = sh_data[pos + j];
       const bool sortThem = av > bv;
-      const uint greater = select(bv, av, sortThem);
-      const uint lesser  = select(av, bv, sortThem);
+      const uint32_t greater = select(bv, av, sortThem);
+      const uint32_t lesser  = select(av, bv, sortThem);
 
       sh_data[pos]     = select(lesser, greater, direction);
       sh_data[pos + j] = select(greater, lesser, direction);
@@ -61,10 +61,10 @@ void bitonic_sort( T* sh_data, const uint localid,
     }
   }
 
-  for (uint j = LQSORT_LOCAL_WORKGROUP_SIZE; j > 0; j >>= 1) {
-    uint pos = 2*localid - (localid & (j - 1));
+  for (uint32_t j = LQSORT_LOCAL_WORKGROUP_SIZE; j > 0; j >>= 1) {
+    uint32_t pos = 2*localid - (localid & (j - 1));
 
-    uint av = sh_data[pos], bv = sh_data[pos + j];
+    uint32_t av = sh_data[pos], bv = sh_data[pos + j];
     const bool sortThem = av > bv;
     sh_data[pos]      = select(av, bv, sortThem);
     sh_data[pos + j]  = select(bv, av, sortThem);
@@ -77,20 +77,20 @@ template <typename T>
 
 void sort_threshold( T* data_in,
     T* data_out,
-    uint start,
-    uint end,
+    uint32_t start,
+    uint32_t end,
     T* temp,
-    uint localid,
+    uint32_t localid,
     const sycl::nd_item<1> &item)
 {
-  uint tsum = end - start;
+  uint32_t tsum = end - start;
   if (tsum == SORT_THRESHOLD) {
     bitonic_sort(data_in + start, localid, item);
-    for (uint i = localid; i < SORT_THRESHOLD; i += LQSORT_LOCAL_WORKGROUP_SIZE) {
+    for (uint32_t i = localid; i < SORT_THRESHOLD; i += LQSORT_LOCAL_WORKGROUP_SIZE) {
       data_out[start + i] = data_in[start + i];
     }
   } else if (tsum > 1) {
-    for (uint i = localid; i < SORT_THRESHOLD; i += LQSORT_LOCAL_WORKGROUP_SIZE) {
+    for (uint32_t i = localid; i < SORT_THRESHOLD; i += LQSORT_LOCAL_WORKGROUP_SIZE) {
       if (i < tsum) {
         temp[i] = data_in[start + i];
       } else {
@@ -100,7 +100,7 @@ void sort_threshold( T* data_in,
     item.barrier(sycl::access::fence_space::local_space);
     bitonic_sort(temp, localid, item);
 
-    for (uint i = localid; i < tsum; i += LQSORT_LOCAL_WORKGROUP_SIZE) {
+    for (uint32_t i = localid; i < tsum; i += LQSORT_LOCAL_WORKGROUP_SIZE) {
       data_out[start + i] = temp[i];
     }
   } else if (tsum == 1 && localid == 0) {
@@ -108,18 +108,18 @@ void sort_threshold( T* data_in,
   }
 }
 
-inline uint atomicAdd(uint &var, uint val)
+inline uint32_t atomicAdd(uint32_t &var, uint32_t val)
 {
-  auto atm = sycl::atomic_ref<uint,
+  auto atm = sycl::atomic_ref<uint32_t,
     sycl::memory_order::relaxed,
     sycl::memory_scope::device,
     sycl::access::address_space::global_space>(var);
   return atm.fetch_add(val);
 }
 
-inline uint atomicSub(uint &var, uint val)
+inline uint32_t atomicSub(uint32_t &var, uint32_t val)
 {
-  auto atm = sycl::atomic_ref<uint,
+  auto atm = sycl::atomic_ref<uint32_t,
     sycl::memory_order::relaxed,
     sycl::memory_scope::device,
     sycl::access::address_space::global_space>(var);
@@ -133,21 +133,21 @@ inline uint atomicSub(uint &var, uint val)
 template <class T>
 void gqsort_kernel(T *d, T *dn, block_record<T> *blocks, parent_record *parents,
                    work_record<T> *result, const sycl::nd_item<1> &item,
-                   uint *lt, uint *gt, uint &ltsum, uint &gtsum, uint &lbeg,
-                   uint &gbeg)
+                   uint32_t *lt, uint32_t *gt, uint32_t &ltsum, uint32_t &gtsum, uint32_t &lbeg,
+                   uint32_t &gbeg)
 {
-  const uint blockid = item.get_group(0);
-  const uint localid = item.get_local_id(0);
+  const uint32_t blockid = item.get_group(0);
+  const uint32_t localid = item.get_local_id(0);
 
-  uint i, lfrom, gfrom, lpivot, gpivot, tmp, ltp = 0, gtp = 0;
+  uint32_t i, lfrom, gfrom, lpivot, gpivot, tmp, ltp = 0, gtp = 0;
 
   // Get the sequence block assigned to this work group
   block_record<T> block = blocks[blockid];
-  uint start = block.start, end = block.end, direction = block.direction;
+  uint32_t start = block.start, end = block.end, direction = block.direction;
   T pivot = block.pivot;
 
   parent_record* pparent = parents + block.parent;
-  uint* psstart, *psend, *poldstart, *poldend, *pblockcount;
+  uint32_t* psstart, *psend, *poldstart, *poldend, *pblockcount;
   T *s, *sn;
 
   // GPU-Quicksort cannot sort in place, as the regular quicksort algorithm can.
@@ -182,7 +182,7 @@ void gqsort_kernel(T *d, T *dn, block_record<T> *blocks, parent_record *parents,
   item.barrier(sycl::access::fence_space::local_space);
 
   // calculate cumulative sums
-  uint n;
+  uint32_t n;
   for(i = 1; i < GQSORT_LOCAL_WORKGROUP_SIZE; i <<= 1) {
     n = 2*i - 1;
     if ((localid & n) == n) {
@@ -244,10 +244,10 @@ void gqsort_kernel(T *d, T *dn, block_record<T> *blocks, parent_record *parents,
   if (localid == 0) {
     //if (atomic_dec(pblockcount) == 0) {
     if (atomicSub(*pblockcount, 1) == 0) {
-      uint sstart = *psstart;
-      uint send = *psend;
-      uint oldstart = *poldstart;
-      uint oldend = *poldend;
+      uint32_t sstart = *psstart;
+      uint32_t send = *psend;
+      uint32_t oldstart = *poldstart;
+      uint32_t oldend = *poldend;
 
       // Store the pivot value between the new sequences
       for(i = sstart; i < send; i ++) {
@@ -280,9 +280,9 @@ void gqsort_kernel(T *d, T *dn, block_record<T> *blocks, parent_record *parents,
 
   // record to push start of the sequence, end of the sequence and direction of sorting on internal stack
   typedef struct workstack_record {
-    uint start;
-    uint end;
-    uint direction;
+    uint32_t start;
+    uint32_t end;
+    uint32_t direction;
   } workstack_record;
 
 #define PUSH(START, END)                                                       \
@@ -308,10 +308,10 @@ template <class T>
 lqsort_kernel(T* d, T* dn, work_record<T>* seqs,
               const sycl::nd_item<1> &item, workstack_record *workstack,
               int &workstack_pointer, T *mys, T *mysn, T *temp,
-              uint &ltsum, uint &gtsum, uint *lt, uint *gt)
+              uint32_t &ltsum, uint32_t &gtsum, uint32_t *lt, uint32_t *gt)
 {
-  const uint blockid = item.get_group(0);
-  const uint localid = item.get_local_id(0);
+  const uint32_t blockid = item.get_group(0);
+  const uint32_t localid = item.get_local_id(0);
 
   // workstack: stores the start and end of the sequences, direction of sort
   // If the sequence is less that SORT_THRESHOLD, it gets sorted.
@@ -322,15 +322,15 @@ lqsort_kernel(T* d, T* dn, work_record<T>* seqs,
   // of the stack is QUICKSORT_BLOCK_SIZE/SORT_THRESHOLD - in the case of BDW GT2 the length
   // of the stack is 2 :)
 
-  uint i, tmp, ltp, gtp;
+  uint32_t i, tmp, ltp, gtp;
 
   T *s, *sn;
   work_record<T> block = seqs[blockid];
-  const uint d_offset = block.start;
-  uint start = 0;
-  uint end   = block.end - d_offset;
+  const uint32_t d_offset = block.start;
+  uint32_t start = 0;
+  uint32_t end   = block.end - d_offset;
 
-  uint direction = 1; // which direction to sort
+  uint32_t direction = 1; // which direction to sort
   // initialize workstack and workstack_pointer: push the initial sequence on the stack
   if (localid == 0) {
     workstack_pointer = 0; // beginning of the stack
@@ -375,7 +375,7 @@ lqsort_kernel(T* d, T* dn, work_record<T>* seqs,
     item.barrier(sycl::access::fence_space::local_space);
 
     // Pick a pivot
-    uint pivot = s[start];
+    uint32_t pivot = s[start];
     if (start < end) {
       pivot = median(pivot, s[(start+end) >> 1], s[end-1]);
     }
@@ -395,7 +395,7 @@ lqsort_kernel(T* d, T* dn, work_record<T>* seqs,
     item.barrier(sycl::access::fence_space::local_space);
 
     // calculate cumulative sums
-    uint n;
+    uint32_t n;
     for(i = 1; i < LQSORT_LOCAL_WORKGROUP_SIZE; i <<= 1) {
       n = 2*i - 1;
       if ((localid & n) == n) {
@@ -422,8 +422,8 @@ lqsort_kernel(T* d, T* dn, work_record<T>* seqs,
     }
 
     // Allocate locations for work items
-    uint lfrom = start + lt[localid];
-    uint gfrom = end - gt[localid+1];
+    uint32_t lfrom = start + lt[localid];
+    uint32_t gfrom = end - gt[localid+1];
 
     // go thru data again writing elements to their correct position
     for (i = start + localid; i < end; i += LQSORT_LOCAL_WORKGROUP_SIZE) {

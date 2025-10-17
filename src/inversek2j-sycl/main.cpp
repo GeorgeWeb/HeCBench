@@ -272,7 +272,7 @@ int main(int argc, char* argv[])
   q.wait();
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-  std::cout << "Average kernel execution time " << (time * 1e-3f) / iteration << " (us)\n";
+  std::cout << "Average kernel execution time " << (time * 1e-3f) / iteration << " (us)" << std::endl << std::flush;
 
   q.memcpy(angle_out_h, angle_out_d, data_size * NUM_JOINTS * sizeof(float)).wait();
 

@@ -1016,7 +1016,9 @@ int main(int argc, char *argv[]) {
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   auto time_sec = time * 1e-9f;
   printf("Total compute time: %f (s)\n", time_sec);
+  fflush(stdout);
   printf("Average compute time per step: %f (s)\n", time_sec / ENDSTEP);
+  fflush(stdout);
 
   free(h_X);
   free(h_Z);

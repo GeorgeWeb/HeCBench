@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
   start = getTime();
   run<sycl::half2>(q, PSIZE, hlfbuf);
   printf("runtime (half2): %lf (s)\n", getTime() - start);
+  fflush(stdout);
   checksum = 0; 
   for (uint64_t i = 0; i < PSIZE / sizeof(sycl::half2); i++) {
     checksum += (float)hlfbuf[i].x() + (float)hlfbuf[i].y();
@@ -126,6 +127,7 @@ int main(int argc, char *argv[])
   start = getTime();
   run<float>(q, PSIZE, sglbuf);
   printf("runtime (float): %lf (s)\n", getTime() - start);
+  fflush(stdout);
   checksum = 0; 
   for (uint64_t i = 0; i < PSIZE/sizeof(float); i++) {
     checksum += sglbuf[i];
@@ -138,6 +140,7 @@ int main(int argc, char *argv[])
   start = getTime();
   run<double>(q, PSIZE, dblbuf);
   printf("runtime (double): %lf (s)\n", getTime() - start);
+  fflush(stdout);
   checksum = 0; 
   for (uint64_t i = 0; i < PSIZE/sizeof(double); i++) {
     checksum += dblbuf[i];

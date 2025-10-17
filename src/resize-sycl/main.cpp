@@ -226,6 +226,7 @@ void resize_image (
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %lf (us)    Perf: %lf (GB/s)\n",
          time * 1e-3 / repeat, (in_size_bytes + out_size_bytes) * repeat * 1.0 / time);
+  fflush(stdout);
 
   q.memcpy(out_images_h, out_images_d, out_size_bytes).wait();
 

@@ -164,6 +164,7 @@ void Perlin::calculate(sycl::queue &default_stream,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   std::cout << "Total kernel execution time " <<  time * 1e-6  << " (ms)" << std::endl;
+  fflush(stdout);
 
   default_stream.memcpy(hPixels, dPixels, sizeof(uint8_t) * 4 * WIN_WIDTH * WIN_HEIGHT).wait();
 

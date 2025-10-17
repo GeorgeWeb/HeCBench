@@ -96,6 +96,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of compute_probs kernel: %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(probs, d_probs, alphas_size_byte).wait();
   verify(probs, probs_ref, alphas_size);
@@ -125,6 +126,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of compute_probs_unitStrides kernel: %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(probs, d_probs, alphas_size_byte).wait();
   verify(probs, probs_ref, alphas_size);
@@ -152,6 +154,7 @@ int main(int argc, char* argv[]) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of compute_probs_unitStrides_sharedMem kernel: %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(probs, d_probs, alphas_size_byte).wait();
   verify(probs, probs_ref, alphas_size);

@@ -199,6 +199,7 @@ int main(int argc, char** argv)
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total execution time of %d loop iterations: %f (s)\n", iterations, time * 1e-9f);
   printf("Average execution time of a loop iteration: %f (us)\n", (time * 1e-3f) / iterations);
+  fflush(stdout);
 
 #ifdef DEBUG
   q.memcpy((float4*)hVel, dVel, numParticles * sizeof(float4));

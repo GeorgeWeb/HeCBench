@@ -57,6 +57,7 @@ void GpuParallel(sycl::queue& q,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(out_vect.data(), bufout_vect, sizeof(Projectile) * num_elements).wait();
   sycl::free(bufin_vect, q);

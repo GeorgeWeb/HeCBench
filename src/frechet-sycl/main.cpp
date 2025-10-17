@@ -114,6 +114,7 @@ void discrete_frechet_distance(const int s, const int n_1, const int n_2, const 
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(ca, d_ca, ca_size).wait();
 

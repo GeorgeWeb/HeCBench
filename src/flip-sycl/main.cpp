@@ -191,6 +191,7 @@ void flip (const int64_t num_dims, const int64_t num_flip_dims,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the flip kernel: %f (ms)\n", (time * 1e-6f) / repeat);
+  fflush(stdout);
 
   free(input);
   free(output);

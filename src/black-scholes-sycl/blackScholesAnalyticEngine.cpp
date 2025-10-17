@@ -332,6 +332,7 @@ void runBlackScholesAnalyticEngine(const int repeat)
 
     printf("Run on GPU\n");
     printf("Average kernel execution time on GPU: %f (ms)\n", ktimeGpu / repeat);
+    fflush(stdout);
 
     mtimeGpu -= ktimeGpu + ktimeGpu / repeat;
     printf("Processing time on GPU: %f (ms)\n", mtimeGpu);

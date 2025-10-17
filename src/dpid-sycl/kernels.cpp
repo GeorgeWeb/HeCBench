@@ -266,6 +266,7 @@ void run(const Params& p, const uchar3* hInput, uchar3* hOutput) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (s)\n", (time * 1e-9f) / p.repeat);
+  fflush(stdout);
   
   q.memcpy(hOutput, dOutput, sizeof(uchar3) * sOutput).wait();
 

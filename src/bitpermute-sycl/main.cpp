@@ -96,6 +96,7 @@ void bit_permute(sycl::queue &q, const int lg_domain_size, const int repeat)
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the kernel: %f (us)\n\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   sycl::free(d_inout, q);
   free(inout);

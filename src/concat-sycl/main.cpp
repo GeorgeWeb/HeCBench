@@ -136,7 +136,9 @@ int main(int argc, char* argv[])
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     float avg_time = (time * 1e-3f) / repeat;
     printf("Average kernel execution time: %f (us)\n", avg_time);
+    fflush(stdout);
     printf("Average kernel throughput : %f (GB/s)\n", size_bytes / (avg_time * 1e-6));
+    fflush(stdout);
 
     sycl::free(d_inp1, q);
     sycl::free(d_inp2, q);

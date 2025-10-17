@@ -325,7 +325,9 @@ void runBoundsEngine(const int repeat)
 
     printf("Run on GPU\n");
     printf("Average kernel execution time on GPU: %lf (ms)  \n\n", ktimeGpu * 1e-3 / repeat);
+    fflush(stdout);
     printf("Average processing time on GPU: %lf (ms)  \n\n", timeGpu * 1e-3 / repeat);
+    fflush(stdout);
 
 
     double totPrice = 0.0;

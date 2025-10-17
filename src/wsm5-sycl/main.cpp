@@ -128,6 +128,7 @@ int main(int argc, char* argv[])
   }
 
   printf("Average kernel execution time: %lf (ms)\n", (time * 1e-6) / repeat);
+  fflush(stdout);
   printf("Checksum: rain = %f snow = %f\n", rain_sum, snow_sum);
   return(0) ;
 }

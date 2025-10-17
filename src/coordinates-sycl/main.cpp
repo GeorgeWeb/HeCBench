@@ -45,6 +45,7 @@ void coordinates_transform(sycl::queue &q, const int num_coords, const int repea
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of device transform: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   // copy results from device to host
   q.submit([&] (sycl::handler &cgh) {
@@ -60,6 +61,7 @@ void coordinates_transform(sycl::queue &q, const int num_coords, const int repea
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of host transform: %f (us)\n", (time * 1e-3f) / 10);
+  fflush(stdout);
 
   bool ok = true;
   for (int i = 0; i < num_coords; i++) {

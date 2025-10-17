@@ -1,7 +1,7 @@
 void sneaky_snake(
   sycl::nd_item<1> &item,
-  const uint*__restrict F_ReadSeq,
-  const uint*__restrict F_RefSeq, 
+  const uint32_t*__restrict F_ReadSeq,
+  const uint32_t*__restrict F_RefSeq, 
   int*__restrict Ftest_Results, 
   const int NumReads,
   const int F_ErrorThreshold)
@@ -9,8 +9,8 @@ void sneaky_snake(
   int tid = item.get_global_id(0);
   if(tid >= NumReads) return;
 
-  uint ReadsPerThread[NBytes];
-  uint RefsPerThread[NBytes];
+  uint32_t ReadsPerThread[NBytes];
+  uint32_t RefsPerThread[NBytes];
 
 #pragma unroll
   for (int i = 0; i < NBytes; i++)
@@ -22,17 +22,17 @@ void sneaky_snake(
   /////////////////////////////////////////////////////////////////////////////
   Ftest_Results[tid] = 1;
 
-  uint ReadCompTmp = 0;
-  uint RefCompTmp = 0;
-  uint DiagonalResult = 0;
+  uint32_t ReadCompTmp = 0;
+  uint32_t RefCompTmp = 0;
+  uint32_t DiagonalResult = 0;
 
-  uint ReadTmp1 = 0;
-  uint ReadTmp2 = 0;
+  uint32_t ReadTmp1 = 0;
+  uint32_t ReadTmp2 = 0;
 
-  uint RefTmp1 = 0;
-  uint RefTmp2 = 0;
+  uint32_t RefTmp1 = 0;
+  uint32_t RefTmp2 = 0;
 
-  uint CornerCase = 0;
+  uint32_t CornerCase = 0;
 
   int localCounter= 0;
   int localCounterMax=0;

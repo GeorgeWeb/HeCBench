@@ -98,6 +98,7 @@ void eval_swish (const int N, const int repeat) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of Swish kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
 
@@ -114,6 +115,7 @@ void eval_swish (const int N, const int repeat) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of SwishGradient kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   // verify
   q.memcpy(h_dX, d_dX, size_bytes);

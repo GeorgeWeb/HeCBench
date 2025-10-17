@@ -114,6 +114,7 @@ int main(int argc, char* argv[])
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of GLU kernel (split dimension = %d): %f (us)\n",
            split_index, (time * 1e-3f) / repeat);
+    fflush(stdout);
 
     q.memcpy(Y, d_Y, nelems_bytes).wait();
 

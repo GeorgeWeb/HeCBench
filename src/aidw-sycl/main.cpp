@@ -314,6 +314,7 @@ int main(int argc, char *argv[])
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of AIDW_Kernel       %f (s)\n", (time * 1e-9f) / iterations);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
 
@@ -346,6 +347,7 @@ int main(int argc, char *argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of AIDW_Kernel_Tiled %f (s)\n", (time * 1e-9f) / iterations);
+  fflush(stdout);
 
   sycl::free(d_dx, q);
   sycl::free(d_dy, q);

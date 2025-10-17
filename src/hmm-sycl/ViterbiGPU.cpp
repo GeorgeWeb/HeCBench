@@ -90,6 +90,7 @@ int ViterbiGPU(float &viterbiProb,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Device execution time of Viterbi iterations %f (s)\n", time * 1e-9f);
+  fflush(stdout);
 
   q.memcpy(maxProbNew, d_maxProbNew, sizeof(float)*nState);
   q.memcpy(path, d_path, sizeof(int)*(nObs-1)*nState);

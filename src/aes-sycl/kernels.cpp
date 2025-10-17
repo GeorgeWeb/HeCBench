@@ -53,7 +53,7 @@ uchar4
 shiftRows(uchar4 row, unsigned int j)
 {
     uchar4 r = row;
-    for(uint i=0; i < j; ++i)  
+    for(uint32_t i=0; i < j; ++i)  
     {
         //r.xyzw() = r.yzwx();
         uchar x = r.x();
@@ -71,8 +71,8 @@ void AESEncrypt(      uchar4  *__restrict output  ,
                 const uchar   *__restrict SBox    ,
                       uchar4  *__restrict block0  ,  // lmem
                       uchar4  *__restrict block1  ,  // lmem
-                const uint     width , 
-                const uint     rounds,
+                const uint32_t     width , 
+                const uint32_t     rounds,
                 sycl::nd_item<2>     item   )
                                 
 {
@@ -118,7 +118,7 @@ uchar4
 shiftRowsInv(uchar4 row, unsigned int j)
 {
     uchar4 r = row;
-    for(uint i=0; i < j; ++i)  
+    for(uint32_t i=0; i < j; ++i)  
     {
         // r = r.wxyz();
         uchar x = r.x();
@@ -136,8 +136,8 @@ void AESDecrypt(       uchar4  *__restrict output    ,
                 const  uchar   *__restrict SBox      ,
                        uchar4  *__restrict block0    ,
                        uchar4  *__restrict block1    ,
-                const  uint    width , 
-                const  uint    rounds,
+                const  uint32_t    width , 
+                const  uint32_t    rounds,
                 sycl::nd_item<2>     item   )
                                 
 {

@@ -96,6 +96,7 @@ int main(int argc, char* argv[])
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of kernel (dim = %d): %f (us)\n",
            dim, (time * 1e-3f) / repeat);
+    fflush(stdout);
 
     q.memcpy(&minValue, d_minValue, sizeof(float)).wait();
     Error(minValue, dim);

@@ -83,12 +83,12 @@ inline vector<string> SplitValues(const std::string &buff, char delim)
 // Create convenience routines that use srand/rand
 // and let developers continue to use the -48 versions.
 
-inline void srand48(unsigned int seed)
+static inline void srand48(unsigned int seed)
 {
     srand(seed);
 }
 
-inline double drand48()
+static inline double drand48()
 {
     return double(rand()) / RAND_MAX;
 }

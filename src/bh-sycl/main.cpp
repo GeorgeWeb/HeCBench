@@ -846,6 +846,7 @@ int main(int argc, char* argv[])
              starttime.tv_sec - starttime.tv_usec/1000000.0);
 
   printf("Total kernel execution time: %.4lf s\n", runtime);
+  fflush(stdout);
 
   // transfer final results back to a host
   q.memcpy(accVel, accVeld, nbodies * sizeof(sycl::float4));

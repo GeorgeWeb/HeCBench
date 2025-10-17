@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
   int repeat = atoi(argv[3]);
 
   int size = width * height;
-  size_t size_output_bytes = size * sizeof(uint);
+  size_t size_output_bytes = size * sizeof(uint32_t);
   size_t size_image_bytes = size * sizeof(sycl::float3);
 
   std::mt19937 gen(19937);
@@ -34,13 +34,13 @@ int main(int argc, char** argv) {
 
   sycl::float3 *h_img = (sycl::float3*) malloc(size_image_bytes);
 
-  uint *h_out = (uint*) malloc(size_output_bytes);
+  uint32_t *h_out = (uint32_t*) malloc(size_output_bytes);
 
   sycl::float3 *d_img = sycl::malloc_device<sycl::float3>(size, q);
 
-  uint *d_tmp = sycl::malloc_device<uint>(size, q);
+  uint32_t *d_tmp = sycl::malloc_device<uint32_t>(size, q);
 
-  uint *d_out = sycl::malloc_device<uint>(size, q);
+  uint32_t *d_out = sycl::malloc_device<uint32_t>(size, q);
 
   // assume that size is a multiple of nthreads
   sycl::range<1> gws (size);

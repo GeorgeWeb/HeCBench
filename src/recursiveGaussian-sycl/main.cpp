@@ -388,6 +388,7 @@ int main(int argc, char** argv)
   }
 
   printf("Average execution time of kernels: %f (s)\n", (time * 1e-9f) / iCycles);
+  fflush(stdout);
 
   // Compute on host
   unsigned int* uiGolden = (unsigned int*)malloc(szBuffBytes);

@@ -351,6 +351,7 @@ void fused_softmax(int batches, int attn_heads, int query_seq_len,
   auto time =
       std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (ms)\n", (time * 1e-6f) / repeat);
+  fflush(stdout);
 
   free(output);
   free(output_ref);

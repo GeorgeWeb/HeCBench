@@ -211,12 +211,12 @@ int main(int argc, char *argv[]) {
 
   // Print results
   std::cout
-    << "Results" << std::endl << std::endl
-    << "Error (L2norm): " << norm << std::endl
-    << "Solve time (s): " << std::chrono::duration_cast<std::chrono::duration<double>>(toc-tic).count() << std::endl
-    << "Total time (s): " << std::chrono::duration_cast<std::chrono::duration<double>>(stop-start).count() << std::endl
-    << "Bandwidth (GB/s): " << 1.0E-9*2.0*n*n*nsteps*sizeof(double)/std::chrono::duration_cast<std::chrono::duration<double>>(toc-tic).count() << std::endl
-    << LINE << std::endl;
+    << "Results" << std::endl << std::endl << std::flush
+    << "Error (L2norm): " << norm << std::endl << std::flush
+    << "Solve time (s): " << std::chrono::duration_cast<std::chrono::duration<double>>(toc-tic).count() << std::endl << std::flush
+    << "Total time (s): " << std::chrono::duration_cast<std::chrono::duration<double>>(stop-start).count() << std::endl << std::flush
+    << "Bandwidth (GB/s): " << 1.0E-9*2.0*n*n*nsteps*sizeof(double)/std::chrono::duration_cast<std::chrono::duration<double>>(toc-tic).count() << std::endl << std::flush
+    << LINE << std::endl << std::flush;
 
   sycl::free(u, q);
   sycl::free(u_tmp, q);

@@ -133,6 +133,7 @@ void neurongroup_stateupdater (
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (us)\n", (time * 1e-3f) / iteration);
+  fflush(stdout);
 
   q.memcpy(_ptr_array_neurongroup_ge, d_ge, size);
   q.memcpy(_ptr_array_neurongroup_gi, d_gi, size);

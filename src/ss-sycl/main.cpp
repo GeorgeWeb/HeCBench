@@ -28,18 +28,18 @@
 
 typedef unsigned char uchar;
 
-int verify(uint* resultCount, uint workGroupCount,
-    uint* result, uint searchLenPerWG,
-    std::vector<uint> &cpuResults)
+int verify(uint32_t* resultCount, uint32_t workGroupCount,
+    uint32_t* result, uint32_t searchLenPerWG,
+    std::vector<uint32_t> &cpuResults)
 {
-  uint count = resultCount[0];
-  for(uint i=1; i<workGroupCount; ++i)
+  uint32_t count = resultCount[0];
+  for(uint32_t i=1; i<workGroupCount; ++i)
   {
-    uint found = resultCount[i];
+    uint32_t found = resultCount[i];
     if(found > 0)
     {
       memcpy((result + count), (result + (i * searchLenPerWG)),
-          found * sizeof(uint));
+          found * sizeof(uint32_t));
       count += found;
     }
   }
@@ -69,9 +69,9 @@ int verify(uint* resultCount, uint workGroupCount,
 * @param length     Length to compare
 * @return 0-failure, 1-success
 */
-int compare(const uchar* text, const uchar* pattern, uint length)
+int compare(const uchar* text, const uchar* pattern, uint32_t length)
 {
-    for(uint l=0; l<length; ++l)
+    for(uint32_t l=0; l<length; ++l)
     {
         if (TOLOWER(text[l]) != pattern[l]) return 0;
     }
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  uint textLength = (uint)(textFile.tellg());
+  uint32_t textLength = (uint32_t)(textFile.tellg());
   uchar* text = (uchar*)malloc(textLength+1);
   memset(text, 0, textLength+1);
   textFile.seekg(0, std::ios::beg);
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
   }
   textFile.close();
 
-  uint subStrLength = subStr.length();
+  uint32_t subStrLength = subStr.length();
   if(subStrLength == 0)
   {
     std::cout << "\nError: Sub-String not specified..." << std::endl;
@@ -147,13 +147,13 @@ int main(int argc, char* argv[])
   std::cout << "Search Pattern : " << subStr << std::endl;
 
   // Rreference implementation on host device
-  std::vector<uint> cpuResults;
+  std::vector<uint32_t> cpuResults;
 
-  uint last = subStrLength - 1;
-  uint badCharSkip[UCHAR_MAX + 1];
+  uint32_t last = subStrLength - 1;
+  uint32_t badCharSkip[UCHAR_MAX + 1];
 
   // Initialize the table with default values
-  uint scan = 0;
+  uint32_t scan = 0;
   for(scan = 0; scan <= UCHAR_MAX; ++scan)
   {
     badCharSkip[scan] = subStrLength;
@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
   }
 
   // search the text
-  uint curPos = 0;
+  uint32_t curPos = 0;
   while((textLength - curPos) > last)
   {
     int p=last;
@@ -199,21 +199,21 @@ int main(int argc, char* argv[])
   uchar *subStrBuf = sycl::malloc_device<uchar>(subStrLength, q);
   q.memcpy(subStrBuf, ss, subStrLength);
 
-  uint totalSearchPos = textLength - subStrLength + 1;
-  uint searchLenPerWG = SEARCH_BYTES_PER_WORKITEM * LOCAL_SIZE;
-  uint workGroupCount = (totalSearchPos + searchLenPerWG - 1) / searchLenPerWG;
+  uint32_t totalSearchPos = textLength - subStrLength + 1;
+  uint32_t searchLenPerWG = SEARCH_BYTES_PER_WORKITEM * LOCAL_SIZE;
+  uint32_t workGroupCount = (totalSearchPos + searchLenPerWG - 1) / searchLenPerWG;
 
-  uint* resultCount = (uint*) malloc(workGroupCount * sizeof(uint));
-  uint* result = (uint*) malloc((textLength - subStrLength + 1) * sizeof(uint));
+  uint32_t* resultCount = (uint32_t*) malloc(workGroupCount * sizeof(uint32_t));
+  uint32_t* result = (uint32_t*) malloc((textLength - subStrLength + 1) * sizeof(uint32_t));
 
-  uint *resultCountBuf = sycl::malloc_device<uint>(workGroupCount, q);
-  uint *resultBuf = sycl::malloc_device<uint>(textLength - subStrLength + 1, q);
+  uint32_t *resultCountBuf = sycl::malloc_device<uint32_t>(workGroupCount, q);
+  uint32_t *resultBuf = sycl::malloc_device<uint32_t>(textLength - subStrLength + 1, q);
 
   sycl::range<1> lws (LOCAL_SIZE);
   sycl::range<1> gws (LOCAL_SIZE * workGroupCount);
 
-  const uint patternLength = subStrLength;
-  const uint maxSearchLength = searchLenPerWG;
+  const uint32_t patternLength = subStrLength;
+  const uint32_t maxSearchLength = searchLenPerWG;
 
   q.wait();
   double time = 0.0;
@@ -243,7 +243,7 @@ int main(int argc, char* argv[])
     for(int i = 0; i < iterations; i++)
       q.submit([&] (sycl::handler &cgh) {
         sycl::local_accessor<uchar, 1> localPattern(sycl::range<1>(subStrLength), cgh);
-        sycl::local_accessor<uint, 0> groupSuccessCounter(cgh);
+        sycl::local_accessor<uint32_t, 0> groupSuccessCounter(cgh);
         cgh.parallel_for<class ss_naive>(
           sycl::nd_range<1>(gws, lws), [=] (sycl::nd_item<1> item) {
           int localIdx = item.get_local_id(0);
@@ -251,11 +251,11 @@ int main(int argc, char* argv[])
           int groupIdx = item.get_group(0);
 
           // Last search idx for all work items
-          uint lastSearchIdx = textLength - patternLength + 1;
+          uint32_t lastSearchIdx = textLength - patternLength + 1;
 
           // global idx for all work items in a WorkGroup
-          uint beginSearchIdx = groupIdx * maxSearchLength;
-          uint endSearchIdx = beginSearchIdx + maxSearchLength;
+          uint32_t beginSearchIdx = groupIdx * maxSearchLength;
+          uint32_t endSearchIdx = beginSearchIdx + maxSearchLength;
           if(beginSearchIdx > lastSearchIdx) return;
           if(endSearchIdx > lastSearchIdx) endSearchIdx = lastSearchIdx;
 
@@ -268,12 +268,12 @@ int main(int argc, char* argv[])
           if(localIdx == 0) groupSuccessCounter = 0u;
           item.barrier(sycl::access::fence_space::local_space);
 
-          auto groupCnt_atomic_ref = sycl::atomic_ref<uint,
+          auto groupCnt_atomic_ref = sycl::atomic_ref<uint32_t,
                                      sycl::memory_order::relaxed,
                                      sycl::memory_scope::work_group,
                                      sycl::access::address_space::local_space> (groupSuccessCounter);
           // loop over positions in global buffer
-          for(uint stringPos=beginSearchIdx+localIdx; stringPos<endSearchIdx; stringPos+=localSize)
+          for(uint32_t stringPos=beginSearchIdx+localIdx; stringPos<endSearchIdx; stringPos+=localSize)
           {
             if (compare(textBuf+stringPos, localPattern.get_pointer(), patternLength) == 1)
             {
@@ -291,8 +291,8 @@ int main(int argc, char* argv[])
     time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
     // Read Results Count per workGroup
-    q.memcpy(resultCount, resultCountBuf, workGroupCount * sizeof(uint));
-    q.memcpy(result, resultBuf, (textLength - subStrLength + 1) * sizeof(uint));
+    q.memcpy(resultCount, resultCountBuf, workGroupCount * sizeof(uint32_t));
+    q.memcpy(result, resultBuf, (textLength - subStrLength + 1) * sizeof(uint32_t));
     q.wait();
 
     verify(resultCount, workGroupCount, result, searchLenPerWG, cpuResults);
@@ -319,11 +319,11 @@ int main(int argc, char* argv[])
     for(int i = 0; i < iterations; i++) {
       q.submit([&] (sycl::handler &cgh) {
           sycl::local_accessor<uchar, 1> localPattern(sycl::range<1>(subStrLength), cgh);
-          sycl::local_accessor<uint, 1> stack1(sycl::range<1>(LOCAL_SIZE * 2), cgh);
-          sycl::local_accessor<uint, 1> stack2(sycl::range<1>(LOCAL_SIZE * 2), cgh);
-          sycl::local_accessor<uint, 0> stack1Counter(cgh);
-          sycl::local_accessor<uint, 0> stack2Counter(cgh);
-          sycl::local_accessor<uint, 0> groupSuccessCounter(cgh);
+          sycl::local_accessor<uint32_t, 1> stack1(sycl::range<1>(LOCAL_SIZE * 2), cgh);
+          sycl::local_accessor<uint32_t, 1> stack2(sycl::range<1>(LOCAL_SIZE * 2), cgh);
+          sycl::local_accessor<uint32_t, 0> stack1Counter(cgh);
+          sycl::local_accessor<uint32_t, 0> stack2Counter(cgh);
+          sycl::local_accessor<uint32_t, 0> groupSuccessCounter(cgh);
           cgh.parallel_for<class ss_loadbalance>(
             sycl::nd_range<1>(gws, lws), [=] (sycl::nd_item<1> item) {
             int localIdx = item.get_local_id(0);
@@ -339,18 +339,18 @@ int main(int argc, char* argv[])
             }
 
             // Last search idx for all work items
-            uint lastSearchIdx = textLength - patternLength + 1;
-            uint stackSize = 0;
+            uint32_t lastSearchIdx = textLength - patternLength + 1;
+            uint32_t stackSize = 0;
 
             // global idx for all work items in a WorkGroup
-            uint beginSearchIdx = groupIdx * maxSearchLength;
-            uint endSearchIdx = beginSearchIdx + maxSearchLength;
+            uint32_t beginSearchIdx = groupIdx * maxSearchLength;
+            uint32_t endSearchIdx = beginSearchIdx + maxSearchLength;
             if(beginSearchIdx > lastSearchIdx) return;
             if(endSearchIdx > lastSearchIdx) endSearchIdx = lastSearchIdx;
-            uint searchLength = endSearchIdx - beginSearchIdx;
+            uint32_t searchLength = endSearchIdx - beginSearchIdx;
 
             // Copy the subStrBuf from global to local buffer
-            for(uint idx = localIdx; idx < patternLength; idx+=localSize)
+            for(uint32_t idx = localIdx; idx < patternLength; idx+=localSize)
             {
                 localPattern[idx] = TOLOWER(subStrBuf[idx]);
             }
@@ -363,15 +363,15 @@ int main(int argc, char* argv[])
             int stackPos = 0;
             int revStackPos = 0;
 
-            auto stack1Cnt_atomic_ref = sycl::atomic_ref<uint,
+            auto stack1Cnt_atomic_ref = sycl::atomic_ref<uint32_t,
                                         sycl::memory_order::relaxed,
                                         sycl::memory_scope::work_group,
                                         sycl::access::address_space::local_space> (stack1Counter);
-            auto stack2Cnt_atomic_ref = sycl::atomic_ref<uint,
+            auto stack2Cnt_atomic_ref = sycl::atomic_ref<uint32_t,
                                         sycl::memory_order::relaxed,
                                         sycl::memory_scope::work_group,
                                         sycl::access::address_space::local_space> (stack2Counter);
-            auto groupCnt_atomic_ref  = sycl::atomic_ref<uint,
+            auto groupCnt_atomic_ref  = sycl::atomic_ref<uint32_t,
                                         sycl::memory_order::relaxed,
                                         sycl::memory_scope::work_group,
                                         sycl::access::address_space::local_space> (groupSuccessCounter);
@@ -464,14 +464,15 @@ int main(int argc, char* argv[])
     time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
     // Read Results Count per workGroup
-    q.memcpy(resultCount, resultCountBuf, workGroupCount * sizeof(uint));
-    q.memcpy(result, resultBuf, (textLength - subStrLength + 1) * sizeof(uint));
+    q.memcpy(resultCount, resultCountBuf, workGroupCount * sizeof(uint32_t));
+    q.memcpy(result, resultBuf, (textLength - subStrLength + 1) * sizeof(uint32_t));
     q.wait();
 
     verify(resultCount, workGroupCount, result, searchLenPerWG, cpuResults);
   }
 
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / iterations);
+  fflush(stdout);
 
   sycl::free(resultCountBuf, q);
   sycl::free(resultBuf, q);

@@ -51,7 +51,9 @@ int main(int argc, char* argv[])
   }
 
   printf("Average kernel execution time (dilate): %f (s)\n", (dilate_time * 1e-9f) / repeat);
+  fflush(stdout);
   printf("Average kernel execution time (erode): %f (s)\n", (erode_time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(srcImg, img_d, memSize).wait();
 

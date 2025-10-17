@@ -208,6 +208,7 @@ int main(int argc, char* argv[])
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Length scale = %.1e ", l);
     printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+    fflush(stdout);
 
     l = l * 10.f;
   }

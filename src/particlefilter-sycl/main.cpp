@@ -475,6 +475,7 @@ int particleFilter(unsigned char * I, int IszX, int IszY, int Nfr, int * seed, i
   long long end = get_time();
   printf("Average execution time of kernels: %f (s)\n",
          elapsed_time(start, end) / (Nfr-1));
+  fflush(stdout)
 
   q.memcpy(arrayX, arrayX_d, Nparticles*sizeof(float));
   q.memcpy(arrayY, arrayY_d, Nparticles*sizeof(float));

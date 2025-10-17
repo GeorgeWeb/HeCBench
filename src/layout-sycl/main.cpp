@@ -39,8 +39,8 @@ void AoSKernel(const AppleTree *__restrict trees,
                int *__restrict outBuf,
                int treeSize, sycl::nd_item<1> &item)
 {
-  uint gid = item.get_global_id(0);
-  uint res = 0;
+  uint32_t gid = item.get_global_id(0);
+  uint32_t res = 0;
   for(int i = 0; i < treeSize; i++)
   {
     res += trees[gid].apples[i];
@@ -53,8 +53,8 @@ void SoAKernel(const ApplesOnTrees *__restrict applesOnTrees,
                int *__restrict outBuf,
                int treeSize, sycl::nd_item<1> &item)
 {
-  uint gid = item.get_global_id(0);
-  uint res = 0;
+  uint32_t gid = item.get_global_id(0);
+  uint32_t res = 0;
   for(int i = 0; i < treeSize; i++)
   {
     res += applesOnTrees[i].trees[gid];
@@ -142,7 +142,7 @@ int main(int argc, char * argv[])
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   std::cout << "Average kernel execution time (AoS): "
-            << (time * 1e-3f) / iterations << " (us)\n";
+            << (time * 1e-3f) / iterations << " (us)" << std::endl << std::flush;
 
   q.memcpy(deviceResult, outputBuffer, outputSize).wait();
 

@@ -410,7 +410,7 @@ int main(int argc, char* argv[])
   std::chrono::duration<double> elapsed_seconds = end - start;
   float runtime = elapsed_seconds.count();
   printf("Total graphB+ runtime:    %.6f s\n", runtime);
-
+  fflush(stdout);
   q.memcpy(inCC, d_inCC, sizeof(int) * g.nodes).wait();
 
 

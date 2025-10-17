@@ -194,6 +194,7 @@ void conv1D(sycl::queue &q, const int input_width, const int mask_width, const i
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time of conv1d kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(b, d_b, size_bytes).wait();
   reference(a, b, h_mask, input_width, mask_width);
 
@@ -212,6 +213,7 @@ void conv1D(sycl::queue &q, const int input_width, const int mask_width, const i
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time of conv1d-tiled kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(b, d_b, size_bytes).wait();
   reference(a, b, h_mask, input_width, mask_width);
 
@@ -230,6 +232,7 @@ void conv1D(sycl::queue &q, const int input_width, const int mask_width, const i
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time of conv1d-tiled-caching kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(b, d_b, size_bytes).wait();
   reference(a, b, h_mask, input_width, mask_width);
 

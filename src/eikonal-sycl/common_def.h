@@ -43,24 +43,24 @@
 //
 // itk image volume definition for 3D anisotropic eikonal solvers
 //
-typedef unsigned int uint;
+typedef unsigned int uint32_t;
 typedef unsigned char uchar;
 
 struct GPU_MEM_STRUCTURE {
   // volsize/blksize : # of pixel in volume/block
   // blknum : # of block
   // blklength : # of pixel in one dimemsion of block
-  uint nActiveBlock, blknum, volsize, blksize;
+  uint32_t nActiveBlock, blknum, volsize, blksize;
 
   // new new x,y,z dim to align power of 4
   int xdim, ydim, zdim, nIter, blklength;
 
   // host memory
-  uint *h_list;
+  uint32_t *h_list;
   bool *h_listVol, *h_listed;
 
   // device memory
-  uint *d_list;
+  uint32_t *d_list;
   double *d_spd;
   bool *d_mask, *d_listVol, *d_con;  
 

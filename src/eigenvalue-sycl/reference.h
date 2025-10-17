@@ -1,12 +1,12 @@
 
-uint calNumEigenValuesLessThan(const float *diagonal,
+uint32_t calNumEigenValuesLessThan(const float *diagonal,
                                const float *offDiagonal,
-                               const uint  length,
+                               const uint32_t  length,
                                const float x);
 
-uint eigenValueCPUReference(float * diagonal,
+uint32_t eigenValueCPUReference(float * diagonal,
                             float * offDiagonal,
-                            uint    length,
+                            uint32_t    length,
                             float * eigenIntervals,
                             float * newEigenIntervals,
                             float tolerance);
@@ -17,4 +17,4 @@ void computeGerschgorinInterval(float * lLimit,
                                 float * uLimit,
                                 const float * diagonal,
                                 const float * offDiagonal,
-                                const uint  length);
+                                const uint32_t  length);

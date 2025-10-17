@@ -173,6 +173,7 @@ void eval(const int nrows, const int repeat) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of cross1 kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(o, d_o, size_bytes).wait();
 
@@ -190,6 +191,7 @@ void eval(const int nrows, const int repeat) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of cross2 kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(o2, d_o, size_bytes).wait();
 
@@ -207,6 +209,7 @@ void eval(const int nrows, const int repeat) {
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of cross3 kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(o3, d_o, size_bytes).wait();
 

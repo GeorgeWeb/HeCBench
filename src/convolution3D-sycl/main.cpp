@@ -237,6 +237,7 @@ void conv3D(const int N, const int C, const int M, const int Win, const int Hin,
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time of conv3d_s1 kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(Y, dY, Y_bytes).wait();
   verify(Y, Y_ref, Y_size);
 
@@ -255,6 +256,7 @@ void conv3D(const int N, const int C, const int M, const int Win, const int Hin,
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time of conv3d_s2 kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(Y, dY, Y_bytes).wait();
   verify(Y, Y_ref, Y_size);
 
@@ -273,6 +275,7 @@ void conv3D(const int N, const int C, const int M, const int Win, const int Hin,
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time of conv3d_s3 kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
   q.memcpy(Y, dY, Y_bytes).wait();
   verify(Y, Y_ref, Y_size);
 

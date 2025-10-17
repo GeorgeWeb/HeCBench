@@ -8,6 +8,8 @@
 #include <oneapi/mkl.hpp>
 #include "reference.h"
 
+#include "Utility.h"
+
 using namespace std;
 
 template <typename T>

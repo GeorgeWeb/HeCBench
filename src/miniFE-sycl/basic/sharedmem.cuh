@@ -80,7 +80,7 @@ struct SharedMemory
 };
 
 // Following are the specializations for the following types.
-// int, uint, char, uchar, short, ushort, long, ulong, bool, float, and double
+// int, uint32_t, char, uchar, short, ushort, long, ulong, bool, float, and double
 // One could also specialize it for user-defined types.
 
 template <>

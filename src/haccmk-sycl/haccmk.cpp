@@ -114,6 +114,7 @@ void haccmk (
   }
 
   printf("Average kernel execution time %f (s)\n", (total_time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(vx2, d_vx2, sizeof(T) * n);
   q.memcpy(vy2, d_vy2, sizeof(T) * n);

@@ -93,6 +93,7 @@ int main(int argc, char* argv[]) {
   }
   
   printf("Average kernel execution time %f (s)\n", (total_time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(image2.data(), pixel, sizeof(ImgPixel) * image2.width() * image2.height()).wait();
 

@@ -99,6 +99,7 @@ int main(int argc, char** argv)
                              cmDevBufOut, uiImageWidth, uiImageHeight);
   }
   printf("Average kernel execution time: %f (s)\n\n", (time * 1e-9f) / iCycles);
+  fflush(stdout);
 
   // Compute on host 
   unsigned int* uiGolden = (unsigned int*)malloc(szBuffBytes);

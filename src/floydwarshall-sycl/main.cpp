@@ -259,6 +259,7 @@ int main(int argc, char** argv) {
   }
 
   printf("Average kernel execution time %f (s)\n", (total_time * 1e-9f) / numIterations);
+  fflush(stdout);
 
   q.memcpy(pathDistanceMatrix, pathDistanceBuffer, matrixSizeBytes).wait();
   sycl::free(pathDistanceBuffer, q);

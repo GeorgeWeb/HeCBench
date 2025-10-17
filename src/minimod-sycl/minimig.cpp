@@ -157,7 +157,7 @@ void kernel_add_source_kernel(float *g_u, llint idx, float source) {
 }
 
 void target(sycl::queue &q,
-            uint nsteps, double *time_kernel,
+            uint32_t nsteps, double *time_kernel,
             const struct grid_t grid,
             llint sx, llint sy, llint sz,
             float hdx_2, float hdy_2, float hdz_2,
@@ -191,7 +191,7 @@ void target(sycl::queue &q,
   sycl::range<3> threadsPerBlock(NDIM, NDIM, NDIM);
 
 #ifdef DEBUG
-  const uint npo = 100;
+  const uint32_t npo = 100;
   #endif
 
   const float coefxyz = coefx[0] + coefy[0] + coefz[0];
@@ -211,7 +211,7 @@ void target(sycl::queue &q,
   q.wait();
   clock_gettime(CLOCK_REALTIME, &start);
 
-  for (uint istep = 1; istep <= nsteps; ++istep) {
+  for (uint32_t istep = 1; istep <= nsteps; ++istep) {
 
       sycl::range<3> n_block_front((grid.nx + NDIM - 1) / NDIM,
                                    (grid.ny + NDIM - 1) / NDIM,

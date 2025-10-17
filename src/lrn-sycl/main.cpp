@@ -63,6 +63,7 @@ void Forward(sycl::queue &q, int repeat)
 
     auto time = (duration_cast<microseconds>(stop - start)).count()/1e6f;
     printf("Average execution time of lrn_fwd_kernel: %.6f sec \n", time / repeat);
+    fflush(stdout);
 
     auto data_inGB = (2 * wk_size * sizeof(float)) / 1e9f;
     auto bandwidth = data_inGB * repeat / time;
@@ -143,6 +144,7 @@ void Backward(sycl::queue &q, int repeat)
 
     auto time = (duration_cast<microseconds>(stop - start)).count()/1e6f;
     printf("Average execution time of lrn_bwd_kernel: %.6f sec \n", time / repeat);
+    fflush(stdout);
 
     auto data_inGB = (3 * wk_size * sizeof(float)) / 1e9f;
     auto bandwidth = data_inGB * repeat / time;

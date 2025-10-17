@@ -229,6 +229,7 @@ int main(int argc, char *argv[]) {
       bool ok = check(C, h_sum, r_sum);
 
       printf("Average time of channel sum (nhwc): %f (ms)\n", (time * 1e-6f) / repeat);
+      fflush(stdout);
       printf("Verification %s for channel sum (nhwc)\n", ok ? "PASS" : "FAIL");
 
       ComputeChannelSumNCHW (q, N, C, W*H, d_X, d_sum, d_sumsq, time, repeat);
@@ -238,6 +239,7 @@ int main(int argc, char *argv[]) {
       ok = check(C, h_sum, r_sum);
       
       printf("Average time of channel sum (nchw): %f (ms)\n", (time * 1e-6f) / repeat);
+      fflush(stdout);
       printf("Verification %s for channel sum (nchw)\n", ok ? "PASS" : "FAIL");
 
       sycl::free(d_X, q);

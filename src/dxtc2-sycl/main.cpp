@@ -163,7 +163,7 @@ int main(int argc, char** argv)
     
           if (idx < 16) {
             // Read color and copy to shared mem.
-            uint c = d_image[(bid)*16 + idx];
+            uint32_t c = d_image[(bid)*16 + idx];
 
             s_colors[idx].x()= ((c >> 0) & 0xFF) * (1.0f / 255.0f);
             s_colors[idx].y()= ((c >> 8) & 0xFF) * (1.0f / 255.0f);
@@ -267,8 +267,9 @@ int main(int argc, char** argv)
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (us)\n", (time * 1e-3f) / numIterations);
+  fflush(stdout);
 
-  q.memcpy(h_result, (uint*)d_result, compressedSize).wait();
+  q.memcpy(h_result, (uint32_t*)d_result, compressedSize).wait();
 
   sycl::free(d_permutations, q);  
   sycl::free(d_image, q);  

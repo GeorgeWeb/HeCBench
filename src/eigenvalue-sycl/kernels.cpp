@@ -1,10 +1,10 @@
 /**********************************************************************
-  Copyright ©2013 Advanced Micro Devices, Inc. All rights reserved.
+  Copyright ï¿½2013 Advanced Micro Devices, Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-  •  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-  •  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
+  ï¿½  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+  ï¿½  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
   other materials provided with the distribution.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -18,15 +18,15 @@
 
 float calNumEigenValuesLessThan(
    const float x, 
-   const uint width, 
+   const uint32_t width, 
    const float *__restrict diagonal, 
    const float *__restrict offDiagonal)
 {
-  uint count = 0;
+  uint32_t count = 0;
 
   float prev_diff = (diagonal[0] - x);
   count += (prev_diff < 0)? 1 : 0;
-  for(uint i = 1; i < width ; i += 1)
+  for(uint32_t i = 1; i < width ; i += 1)
   {
     float diff = (diagonal[i] - x) - ((offDiagonal[i-1] * offDiagonal[i-1]) / prev_diff);
 
@@ -37,20 +37,20 @@ float calNumEigenValuesLessThan(
 }
 
 void calNumEigenValueInterval(
-    uint  *__restrict numEigenIntervals,
+    uint32_t  *__restrict numEigenIntervals,
     const float *__restrict eigenIntervals,
     const float *__restrict diagonal, 
     const float *__restrict offDiagonal,
-    const uint     width,
+    const uint32_t     width,
     sycl::nd_item<1> &item)
 {
-  uint gid = item.get_global_id(0);
-  uint lowerId = 2 * gid; 
-  uint upperId = lowerId + 1;
+  uint32_t gid = item.get_global_id(0);
+  uint32_t lowerId = 2 * gid; 
+  uint32_t upperId = lowerId + 1;
   float lowerLimit = eigenIntervals[lowerId];
   float upperLimit = eigenIntervals[upperId];
-  uint lower = calNumEigenValuesLessThan(lowerLimit, width, diagonal, offDiagonal);
-  uint upper = calNumEigenValuesLessThan(upperLimit, width, diagonal, offDiagonal);
+  uint32_t lower = calNumEigenValuesLessThan(lowerLimit, width, diagonal, offDiagonal);
+  uint32_t upper = calNumEigenValuesLessThan(upperLimit, width, diagonal, offDiagonal);
   numEigenIntervals[gid] = upper - lower;
 }
 
@@ -58,27 +58,27 @@ void calNumEigenValueInterval(
 void recalculateEigenIntervals(
           float *__restrict newEigenIntervals,
     const float *__restrict eigenIntervals,
-    const uint  *__restrict numEigenIntervals,
+    const uint32_t  *__restrict numEigenIntervals,
     const float *__restrict diagonal,
     const float *__restrict offDiagonal,
-    const    uint    width,  
+    const    uint32_t    width,  
     const    float   tolerance,
     sycl::nd_item<1> &item)
 {
-  uint gid = item.get_global_id(0);
-  uint lowerId = 2 * gid; 
-  uint upperId = lowerId + 1;
-  uint currentIndex = gid;
+  uint32_t gid = item.get_global_id(0);
+  uint32_t lowerId = 2 * gid; 
+  uint32_t upperId = lowerId + 1;
+  uint32_t currentIndex = gid;
 
-  uint index = 0;
+  uint32_t index = 0;
   while(currentIndex >= numEigenIntervals[index])
   {
     currentIndex -= numEigenIntervals[index];
     ++index;
   }
 
-  uint lId = 2 * index;
-  uint uId = lId + 1;
+  uint32_t lId = 2 * index;
+  uint32_t uId = lId + 1;
 
   /* if the number of eigenvalues in the interval is just 1 */
   if(numEigenIntervals[index] == 1)

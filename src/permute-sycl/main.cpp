@@ -130,6 +130,7 @@ int main(int argc, char **argv) {
         q, d_out, d_inp, B, T, C, NH, block_size);
 
     printf("block_size %4d | time %f ms\n", block_size, elapsed_time);
+    fflush(stdout);
   }
 
   // free memory

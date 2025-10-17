@@ -80,6 +80,7 @@ int main(int argc, char* argv[]) {
   }
 
   printf("Average kernel execution time: %f (ms)\n", (time * 1e-6f) / repeat);
+  fflush(stdout);
 
   q.memcpy(d_res.data(), d_list, sizeof(long) * elems).wait();
   sycl::free(d_list, q);

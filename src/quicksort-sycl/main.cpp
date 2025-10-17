@@ -47,7 +47,7 @@
 //#define GET_DETAILED_PERFORMANCE
 
 // Types:
-typedef unsigned int uint;
+typedef unsigned int uint32_t;
 #ifdef min
 #undef min
 #endif
@@ -144,7 +144,7 @@ void gqsort(sycl::queue &q, T *db, T *dnb, std::vector<block_record<T>> &blocks,
 
 #ifdef GET_DETAILED_PERFORMANCE
   static double absoluteTotal = 0.0;
-  static uint count = 0;
+  static uint32_t count = 0;
 
   if (reset) {
     absoluteTotal = 0.0;
@@ -169,14 +169,14 @@ void gqsort(sycl::queue &q, T *db, T *dnb, std::vector<block_record<T>> &blocks,
   q.memcpy(newsb, news.data(), sizeof(work_record<T>) * news.size());
 
   q.submit([&](sycl::handler &cgh) {
-    sycl::local_accessor<uint, 1> lt_acc(
+    sycl::local_accessor<uint32_t, 1> lt_acc(
         sycl::range<1>(GQSORT_LOCAL_WORKGROUP_SIZE+1), cgh);
-    sycl::local_accessor<uint, 1> gt_acc(
+    sycl::local_accessor<uint32_t, 1> gt_acc(
         sycl::range<1>(GQSORT_LOCAL_WORKGROUP_SIZE+1), cgh);
-    sycl::local_accessor<uint, 0> ltsum_acc(cgh);
-    sycl::local_accessor<uint, 0> gtsum_acc(cgh);
-    sycl::local_accessor<uint, 0> lbeg_acc(cgh);
-    sycl::local_accessor<uint, 0> gbeg_acc(cgh);
+    sycl::local_accessor<uint32_t, 0> ltsum_acc(cgh);
+    sycl::local_accessor<uint32_t, 0> gtsum_acc(cgh);
+    sycl::local_accessor<uint32_t, 0> lbeg_acc(cgh);
+    sycl::local_accessor<uint32_t, 0> gbeg_acc(cgh);
 
     cgh.parallel_for(
       sycl::nd_range<1>(GQSORT_LOCAL_WORKGROUP_SIZE * blocks.size(),
@@ -233,11 +233,11 @@ void lqsort(sycl::queue &q, T *db, T *dnb, std::vector<work_record<T>> &done) {
         sycl::range<1>(QUICKSORT_BLOCK_SIZE), cgh);
     sycl::local_accessor<T, 1> temp_acc(
         sycl::range<1>(SORT_THRESHOLD), cgh);
-    sycl::local_accessor<uint, 0> ltsum_acc(cgh);
-    sycl::local_accessor<uint, 0> gtsum_acc(cgh);
-    sycl::local_accessor<uint, 1> lt_acc(
+    sycl::local_accessor<uint32_t, 0> ltsum_acc(cgh);
+    sycl::local_accessor<uint32_t, 0> gtsum_acc(cgh);
+    sycl::local_accessor<uint32_t, 1> lt_acc(
         sycl::range<1>(LQSORT_LOCAL_WORKGROUP_SIZE+1), cgh);
-    sycl::local_accessor<uint, 1> gt_acc(
+    sycl::local_accessor<uint32_t, 1> gt_acc(
         sycl::range<1>(LQSORT_LOCAL_WORKGROUP_SIZE+1), cgh);
 
     cgh.parallel_for(
@@ -281,7 +281,7 @@ template <class T> void GPUQSort(sycl::queue &q, size_t size, T *d, T *dn) {
   const size_t MAXSEQ = optp(size, 0.00009516, 203);
   const size_t MAX_SIZE = 12*std::max(MAXSEQ, (size_t)QUICKSORT_BLOCK_SIZE);
   //std::cout << "MAXSEQ = " << MAXSEQ << std::endl;
-  uint startpivot = median_host(d[0], d[size/2], d[size-1]);
+  uint32_t startpivot = median_host(d[0], d[size/2], d[size-1]);
   std::vector<work_record<T>> work, done, news;
   work.reserve(MAX_SIZE);
   done.reserve(MAX_SIZE);
@@ -302,16 +302,16 @@ template <class T> void GPUQSort(sycl::queue &q, size_t size, T *d, T *dn) {
       blocksize += std::max((it->end - it->start)/MAXSEQ, (size_t)1);
     }
     for(auto it = work.begin(); it != work.end(); ++it) {
-      uint start = it->start;
-      uint end   = it->end;
-      uint pivot = it->pivot;
-      uint direction = it->direction;
-      uint blockcount = (end - start + blocksize - 1)/blocksize;
+      uint32_t start = it->start;
+      uint32_t end   = it->end;
+      uint32_t pivot = it->pivot;
+      uint32_t direction = it->direction;
+      uint32_t blockcount = (end - start + blocksize - 1)/blocksize;
       parent_record prnt(start, end, start, end, blockcount-1);
       parent_records.push_back(prnt);
 
-      for(uint i = 0; i < blockcount - 1; i++) {
-        uint bstart = start + blocksize*i;
+      for(uint32_t i = 0; i < blockcount - 1; i++) {
+        uint32_t bstart = start + blocksize*i;
         block_record<T> br(bstart, bstart+blocksize, pivot, direction, parent_records.size()-1);
         blocks.push_back(br);
       }
@@ -352,7 +352,7 @@ template <class T> void GPUQSort(sycl::queue &q, size_t size, T *d, T *dn) {
 }
 
 template <class T>
-int test(uint arraySize, unsigned int  NUM_ITERATIONS,
+int test(uint32_t arraySize, unsigned int  NUM_ITERATIONS,
          const std::string& type_name)
 {
   double totalTime, quickSortTime, stdSortTime;
@@ -387,7 +387,7 @@ int test(uint arraySize, unsigned int  NUM_ITERATIONS,
   quickSortTime = totalTime;
 #ifdef TRUST_BUT_VERIFY
   {
-    std::vector<uint> verify(arraySize);
+    std::vector<uint32_t> verify(arraySize);
     std::copy(pArray, pArray + arraySize, verify.begin());
 
     std::cout << "verifying: ";
@@ -413,7 +413,7 @@ int test(uint arraySize, unsigned int  NUM_ITERATIONS,
 #endif // RUN_CPU_SORTS
 
   std::cout << "Sorting with GPU quicksort: " << std::endl;
-  std::vector<uint> original(arraySize);
+  std::vector<uint32_t> original(arraySize);
   std::copy(pArray, pArray + arraySize, original.begin());
 
 #ifdef USE_GPU
@@ -425,11 +425,11 @@ int test(uint arraySize, unsigned int  NUM_ITERATIONS,
   std::vector<double> times;
   times.resize(NUM_ITERATIONS);
   double AverageTime = 0.0;
-  uint num_failures = 0;
-  for(uint k = 0; k < NUM_ITERATIONS; k++) {
+  uint32_t num_failures = 0;
+  for(uint32_t k = 0; k < NUM_ITERATIONS; k++) {
     std::copy(original.begin(), original.end(), pArray);
-    std::vector<uint> seqs;
-    std::vector<uint> verify(arraySize);
+    std::vector<uint32_t> seqs;
+    std::vector<uint32_t> verify(arraySize);
     std::copy(pArray, pArray + arraySize, verify.begin());
 
     beginClock = seconds();
@@ -463,7 +463,7 @@ int test(uint arraySize, unsigned int  NUM_ITERATIONS,
   AverageTime = AverageTime/NUM_ITERATIONS;
   std::cout << "Average Time: " << AverageTime * 1000 << " ms" << std::endl;
   double stdDev = 0.0, minTime = 1000000.0, maxTime = 0.0;
-  for(uint k = 0; k < NUM_ITERATIONS; k++)
+  for(uint32_t k = 0; k < NUM_ITERATIONS; k++)
   {
     stdDev += (AverageTime - times[k])*(AverageTime - times[k]);
     minTime = std::min(minTime, times[k]);
@@ -494,12 +494,12 @@ int test(uint arraySize, unsigned int  NUM_ITERATIONS,
 int main(int argc, char** argv)
 {
   unsigned int  NUM_ITERATIONS;
-  uint      heightReSz, widthReSz;
+  uint32_t      heightReSz, widthReSz;
 
   bool success = parseArgs (argc, argv, &NUM_ITERATIONS, &widthReSz, &heightReSz);
   if (!success) return -1;
-  uint arraySize = widthReSz*heightReSz;
-  test<uint>(arraySize, NUM_ITERATIONS, "uint");
+  uint32_t arraySize = widthReSz*heightReSz;
+  test<uint32_t>(arraySize, NUM_ITERATIONS, "uint32_t");
   test<float>(arraySize, NUM_ITERATIONS, "float");
   test<double>(arraySize, NUM_ITERATIONS, "double");
   return 0;

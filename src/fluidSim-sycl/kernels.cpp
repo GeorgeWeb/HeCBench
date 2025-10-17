@@ -41,11 +41,11 @@ void lbm (
     const double *__restrict weight,
     double omega)
 {
-  uint idx = item.get_global_id(1);
-  uint idy = item.get_global_id(0);
-  uint width = item.get_global_range(1);
-  uint height = item.get_global_range(0);
-  uint pos = idx + width * idy;
+  uint32_t idx = item.get_global_id(1);
+  uint32_t idy = item.get_global_id(0);
+  uint32_t width = item.get_global_range(1);
+  uint32_t height = item.get_global_range(0);
+  uint32_t pos = idx + width * idy;
 
   // Read input distributions
   double f0 = if0[pos];
@@ -251,6 +251,7 @@ void fluidSim (
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (s)\n", (time * 1e-9f) / iterations);
+  fflush(stdout);
 
   q.memcpy(h_of0, d_if0, dbl_size);
   q.memcpy((sycl::double4*)h_of1234, d_if1234, dbl4_size);

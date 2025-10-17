@@ -160,6 +160,7 @@ int main(int argc, char* argv[])
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of zero-point kernel: %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(zp, d_zp, size_bytes);
   q.memcpy(scale, d_scale, size_bytes);

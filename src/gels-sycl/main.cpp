@@ -97,6 +97,7 @@ int run_gels_batch_example(sycl::queue &q, const int repeat) {
   }
 
   printf("Average kernel execution time : %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.copy(B_dev, B, stride_b * batch_size).wait();
 

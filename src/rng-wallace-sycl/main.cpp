@@ -161,6 +161,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (us)\n", time * 1e-3f / repeat);
+  fflush(stdout);
 
   q.memcpy(randomNumbers, d_randomNumbers, sizeof(float) * WALLACE_OUTPUT_SIZE).wait();
 

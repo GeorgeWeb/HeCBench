@@ -140,6 +140,7 @@ int main(int argc, char* argv[])
     total_ktime += insert_hashtable(q, pHashTable, pInsertKvs, num_inserts_per_batch);
   }
   printf("Average kernel execution time (insert): %f (s)\n", (total_ktime * 1e-9) / num_insert_batches);
+  fflush(stdout);
 
   // Delete items from the hash table
   total_ktime = 0.0;
@@ -155,6 +156,7 @@ int main(int argc, char* argv[])
     total_ktime += delete_hashtable(q, pHashTable, pDeleteKvs, num_deletes_per_batch);
   }
   printf("Average kernel execution time (delete): %f (s)\n", (total_ktime * 1e-9) / num_delete_batches);
+  fflush(stdout);
 
   // Get all the key-values from the hash table
   std::vector<KeyValue> kvs = iterate_hashtable(q, pHashTable);

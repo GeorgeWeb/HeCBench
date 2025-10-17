@@ -231,9 +231,13 @@ void ellipsetrack(cl::sycl::queue &q, avi_t *video, double *xc0, double *yc0, in
 	
 	// Report average processing time per frame
 	printf("\n\nTracking runtime (average per frame):\n");
+	fflush(stdout);
 	printf("------------------------------------\n");
+	fflush(stdout);
 	printf("MGVF computation: %.5f seconds\n", ((float) (MGVF_time)) / (float) (1000*1000*Nf));
+	fflush(stdout);
 	printf(" Snake evolution: %.5f seconds\n", ((float) (snake_time)) / (float) (1000*1000*Nf));
+	fflush(stdout);
 }
 
 

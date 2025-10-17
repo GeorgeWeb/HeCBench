@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 
   unsigned int *tauswortheSeeds = (unsigned int *) malloc(seed_size);
   for (unsigned i = 0; i < TAUSWORTHE_NUM_SEEDS; i++)
-    tauswortheSeeds[i] = (uint)rand() + 16;
+    tauswortheSeeds[i] = (uint32_t)rand() + 16;
 
 #ifdef USE_GPU
   sycl::queue q(sycl::gpu_selector_v, sycl::property::queue::in_order());
@@ -109,6 +109,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(lookbackSimulationResultsMean, d_lookbackSimulationResultsMean, loopback_size);
   q.memcpy(lookbackSimulationResultsVariance, d_lookbackSimulationResultsVariance, loopback_size);

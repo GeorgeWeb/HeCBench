@@ -95,6 +95,7 @@ double* generateGaborKernelDevice(
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_gabor_spatial, d_gabor_spatial, image_size_bytes).wait();
   sycl::free(d_gabor_spatial, q);

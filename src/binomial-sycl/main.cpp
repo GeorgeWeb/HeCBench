@@ -89,6 +89,7 @@ int main(int argc, char **argv)
   printf("Options count            : %i     \n", OPT_N);
   printf("Time steps               : %i     \n", NUM_STEPS);
   printf("Total binomialOptionsGPU() time: %f msec\n", gpuTime * 1000);
+  fflush(stdout);
   printf("Options per second       : %f     \n", OPT_N / (gpuTime));
 
   printf("Running CPU binomial tree...\n");

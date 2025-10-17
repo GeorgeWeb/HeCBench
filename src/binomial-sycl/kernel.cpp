@@ -158,6 +158,7 @@ extern "C" void binomialOptionsGPU(
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time : %f (us)\n", time * 1e-3f / numIterations);
+  fflush(stdout);
 
   q.memcpy(callValue, d_callValue, optN *sizeof(real)).wait();
   sycl::free(d_optionData, q);

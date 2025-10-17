@@ -83,6 +83,7 @@ int main(int argc, char* argv[]) {
   }
 
   printf("Total kernel execution time: %f (s)\n", time * 1e-9f);
+  fflush(stdout);
   printf("%s\n", error ? "FAIL" : "PASS");
 
   free(d_test, q);

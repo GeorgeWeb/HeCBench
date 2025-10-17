@@ -4,6 +4,8 @@
 #include <sycl/sycl.hpp>
 #include "kernels.h"
 
+#include "Utility.h"
+
 // thread block size
 #define BLOCK_SIZE 256
 

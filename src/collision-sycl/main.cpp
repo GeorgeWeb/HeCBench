@@ -355,6 +355,7 @@ int main(int argc, char* argv[]) {
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the function test_collision: %f (us)\n",
          time * 1e-3f / repeat);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
   for (int i = 0; i < repeat; i++) 

@@ -193,6 +193,7 @@ int main(int argc, char* argv[])
       auto end = std::chrono::steady_clock::now();
       auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
       printf("Average execution time of dense embedding kernel (k1): %f (us)\n", (time * 1e-3f) / repeat);
+      fflush(stdout);
       q.memcpy(output_k1, d_output, input_size_bytes);
 
       q.memset(d_output, 0, input_size_bytes);
@@ -213,6 +214,7 @@ int main(int argc, char* argv[])
       end = std::chrono::steady_clock::now();
       time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
       printf("Average execution time of dense embedding kernel (k2): %f (us)\n", (time * 1e-3f) / repeat);
+      fflush(stdout);
       q.memcpy(output_k2, d_output, input_size_bytes).wait();
 
       q.memset(d_output, 0, input_size_bytes);

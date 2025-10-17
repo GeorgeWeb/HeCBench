@@ -95,6 +95,7 @@ void generateVoxels(sycl::queue &q, const float *points, size_t points_size,
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the voxelization kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   h_real_num_voxels_ = sycl::malloc_host<unsigned int>(1, q);
   q.memcpy(h_real_num_voxels_, d_real_num_voxels_, sizeof(int)).wait();
@@ -113,6 +114,7 @@ void generateVoxels(sycl::queue &q, const float *points, size_t points_size,
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of the feature extraction kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   sycl::free(hash_table_, q);
   sycl::free(voxels_temp_, q);

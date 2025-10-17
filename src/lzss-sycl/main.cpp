@@ -29,10 +29,10 @@ void compressKernelI(const T *input, uint32_t numOfBlocks,
                      uint32_t *__restrict prefixBuffer,
                      uint8_t *__restrict byteFlagArr)
 {
-  // Block size in uint of datatype
+  // Block size in uint32_t of datatype
   const uint32_t blockSize = BLOCK_SIZE / sizeof(T);
 
-  // Window size in uint of datatype
+  // Window size in uint32_t of datatype
   const uint32_t threadSize = THREAD_SIZE;
 
   // Allocate shared memory for the lookahead buffer of the whole block, the
@@ -252,10 +252,10 @@ void compressKernelIII(uint32_t numOfBlocks,
                        uint8_t *__restrict compressedDataGlobal,
                        const sycl::nd_item<3> &item)
 {
-  // Block size in uint of bytes
+  // Block size in uint32_t of bytes
   const int blockSize = BLOCK_SIZE / sizeof(T);
 
-  // Window size in uint of bytes
+  // Window size in uint32_t of bytes
   const int threadSize = THREAD_SIZE;
 
   // find block index

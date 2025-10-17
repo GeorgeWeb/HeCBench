@@ -1,8 +1,8 @@
 int lid = item.get_local_id(0);
-uint lsize = item.get_local_range(0);
-uint grp_id = item.get_group(0);
-uint gid = item.get_global_id(0);
-uint gsize = item.get_global_range(0);
+uint32_t lsize = item.get_local_range(0);
+uint32_t grp_id = item.get_group(0);
+uint32_t gid = item.get_global_id(0);
+uint32_t gsize = item.get_global_range(0);
 
 int prefixBase = grp_id * BUCKET_BLOCK_MEMORY;
 const int warpBase = (lid >> BUCKET_WARP_LOG_SIZE) * DIVISIONS;

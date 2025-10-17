@@ -187,6 +187,7 @@ int sptrsv_syncfree (
   }
 
   printf("Average kernel execution time: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(x, d_x, sizeof(VALUE_TYPE)*n).wait();
 

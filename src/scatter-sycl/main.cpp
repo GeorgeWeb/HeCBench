@@ -85,6 +85,7 @@ void scatter(sycl::queue &q, int64_t num_elems, int repeat) {
     time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   }
   printf("Average execution time of kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   q.memcpy(h_out, d_out, out_size_bytes).wait();
 

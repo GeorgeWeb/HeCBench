@@ -5,12 +5,12 @@
 #include "constants.h"
 #include "grid.h"
 
-void target_init(struct grid_t grid, uint nsteps,
+void target_init(struct grid_t grid, uint32_t nsteps,
                  const float *__restrict__ u, const float *__restrict__ v, const float *__restrict__ phi,
                  const float *__restrict__ eta, const float *__restrict__ coefx, const float *__restrict__ coefy,
                  const float *__restrict__ coefz, const float *__restrict__ vp, const float *__restrict__ source);
 
-void target(sycl::queue &q, uint nsteps, double *time_kernel,
+void target(sycl::queue &q, uint32_t nsteps, double *time_kernel,
             struct grid_t grid,
             llint sx, llint sy, llint sz,
             float hdx_2, float hdy_2, float hdz_2,
@@ -18,7 +18,7 @@ void target(sycl::queue &q, uint nsteps, double *time_kernel,
             float *__restrict__ u, const float *__restrict__ v, const float *__restrict__ vp,
             const float *__restrict__ phi, const float *__restrict__ eta, const float *__restrict__ source);
 
-void target_finalize(struct grid_t grid, uint nsteps,
+void target_finalize(struct grid_t grid, uint32_t nsteps,
                      const float *__restrict__ u, const float *__restrict__ v, const float *__restrict__ phi,
                      const float *__restrict__ eta, const float *__restrict__ coefx, const float *__restrict__ coefy,
                      const float *__restrict__ coefz, const float *__restrict__ vp, const float *__restrict__ source);

@@ -2,19 +2,31 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#if 0
 #include <sys/time.h>
+#else
+#include <chrono>
+#endif
 #include <sycl/sycl.hpp>
 #include "backprop.h"
 #include "reference.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
+#if 0
 double get_time() {
   struct timeval t;
   gettimeofday(&t,NULL);
   return t.tv_sec+t.tv_usec*1e-6;
 }
+#else
+static inline double get_time() {
+  using namespace std::chrono;
+  auto now = high_resolution_clock::now();
+  auto duration = now.time_since_epoch();
+  return duration_cast<duration<double>>(duration).count();
+}
+#endif
 
 unsigned int num_threads = 0;
 unsigned int num_blocks = 0;

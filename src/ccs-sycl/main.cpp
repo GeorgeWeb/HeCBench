@@ -431,6 +431,7 @@ int main(int argc, char *argv[])
   auto kend = std::chrono::steady_clock::now();
   auto ktime = std::chrono::duration_cast<std::chrono::nanoseconds>(kend - kstart).count();
   printf("Average kernel execution time %f (s)\n", ktime * 1e-9f / repeat);
+  fflush(stdout);
 
   float *bicluster_temp_score = (float *)calloc(maxbcn,sizeof(float));
   q.memcpy(bicluster_temp_score, d_bc_score, sizeof(float)*maxbcn);

@@ -4,6 +4,7 @@
 #include <sycl/sycl.hpp>
 #include "reference.h"
 
+#include "Utility.h"
 
 /* Do not allow the test to allocate more than MAX_MEM gigabytes. */
 #ifndef MAX_MEM

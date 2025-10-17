@@ -10,11 +10,11 @@
  */
 
 
-static uint iSnapUp(const uint dividend, const uint divisor)
+static uint32_t iSnapUp(const uint32_t dividend, const uint32_t divisor)
 {
   return ((dividend % divisor) == 0) ? dividend : (dividend - dividend % divisor + divisor);
 }
-uint factorRadix2(uint& log2L, uint L)
+uint32_t factorRadix2(uint32_t& log2L, uint32_t L)
 {
   if(!L)
   {
@@ -35,17 +35,17 @@ uint factorRadix2(uint& log2L, uint L)
 //Allocate 2 * 'size' local memory, initialize the first half
 //with 'size' zeros avoiding if(pos >= offset) condition evaluation
 //and saving instructions
-inline uint scan1Inclusive(sycl::nd_item<1> &item, const uint idata,
-                           uint *l_Data, const uint size)
+inline uint32_t scan1Inclusive(sycl::nd_item<1> &item, const uint32_t idata,
+                           uint32_t *l_Data, const uint32_t size)
 {
-  uint pos = 2 * item.get_local_id(0) - (item.get_local_id(0) & (size - 1));
+  uint32_t pos = 2 * item.get_local_id(0) - (item.get_local_id(0) & (size - 1));
   l_Data[pos] = 0;
   pos += size;
   l_Data[pos] = idata;
 
-  for(uint offset = 1; offset < size; offset <<= 1){
+  for(uint32_t offset = 1; offset < size; offset <<= 1){
     item.barrier(sycl::access::fence_space::local_space);
-    uint t = l_Data[pos] + l_Data[pos - offset];
+    uint32_t t = l_Data[pos] + l_Data[pos - offset];
     item.barrier(sycl::access::fence_space::local_space);
     l_Data[pos] = t;
   }
@@ -53,8 +53,8 @@ inline uint scan1Inclusive(sycl::nd_item<1> &item, const uint idata,
   return l_Data[pos];
 }
 
-inline uint scan1Exclusive(sycl::nd_item<1> &item, const uint idata,
-                           uint *l_Data, const uint size)
+inline uint32_t scan1Exclusive(sycl::nd_item<1> &item, const uint32_t idata,
+                           uint32_t *l_Data, const uint32_t size)
 {
   return scan1Inclusive(item, idata, l_Data, size) - idata;
 }
@@ -65,32 +65,32 @@ inline uint scan1Exclusive(sycl::nd_item<1> &item, const uint idata,
 
 //Almost the same as naiveScan1 but doesn't need barriers
 //assuming size <= WARP_SIZE
-inline uint warpScanInclusive(sycl::nd_item<1> &item, const uint idata,
-                              uint *l_Data, const uint size)
+inline uint32_t warpScanInclusive(sycl::nd_item<1> &item, const uint32_t idata,
+                              uint32_t *l_Data, const uint32_t size)
 {
-  uint pos = 2 * item.get_local_id(0) - (item.get_local_id(0) & (size - 1));
+  uint32_t pos = 2 * item.get_local_id(0) - (item.get_local_id(0) & (size - 1));
   l_Data[pos] = 0;
   pos += size;
   l_Data[pos] = idata;
 
-  for(uint offset = 1; offset < size; offset <<= 1)
+  for(uint32_t offset = 1; offset < size; offset <<= 1)
     l_Data[pos] += l_Data[pos - offset];
 
   return l_Data[pos];
 }
 
-inline uint warpScanExclusive(sycl::nd_item<1> &item, const uint idata,
-                              uint *l_Data, const uint size)
+inline uint32_t warpScanExclusive(sycl::nd_item<1> &item, const uint32_t idata,
+                              uint32_t *l_Data, const uint32_t size)
 {
   return warpScanInclusive(item, idata, l_Data, size) - idata;
 }
 
-inline uint scan1Inclusive(sycl::nd_item<1> &item, const uint idata,
-                           uint *l_Data, const uint size)
+inline uint32_t scan1Inclusive(sycl::nd_item<1> &item, const uint32_t idata,
+                           uint32_t *l_Data, const uint32_t size)
 {
   if(size > WARP_SIZE){
     //Bottom-level inclusive warp scan
-    uint warpResult = warpScanInclusive(item, idata, l_Data, WARP_SIZE);
+    uint32_t warpResult = warpScanInclusive(item, idata, l_Data, WARP_SIZE);
 
     //Save top elements of each warp for exclusive warp scan
     //sync to wait for warp scans to complete (because l_Data is being overwritten)
@@ -104,7 +104,7 @@ inline uint scan1Inclusive(sycl::nd_item<1> &item, const uint idata,
     item.barrier(sycl::access::fence_space::local_space);
     if( lid < (WORKGROUP_SIZE / WARP_SIZE) ){
       //grab top warp elements
-      uint val = l_Data[lid] ;
+      uint32_t val = l_Data[lid] ;
       //calculate exclsive scan and write back to shared memory
       l_Data[lid] = warpScanExclusive(item, val, l_Data, size >> LOG2_WARP_SIZE);
     }
@@ -117,8 +117,8 @@ inline uint scan1Inclusive(sycl::nd_item<1> &item, const uint idata,
   }
 }
 
-inline uint scan1Exclusive(sycl::nd_item<1> &item, const uint idata,
-                           uint *l_Data, const uint size){
+inline uint32_t scan1Exclusive(sycl::nd_item<1> &item, const uint32_t idata,
+                           uint32_t *l_Data, const uint32_t size){
   return scan1Inclusive(item, idata, l_Data, size) - idata;
 }
 #endif
@@ -127,20 +127,20 @@ inline uint scan1Exclusive(sycl::nd_item<1> &item, const uint idata,
 //Vector scan: the array to be scanned is stored
 //in work-item private memory as uint4
 inline uint4 scan4Inclusive(sycl::nd_item<1> &item, uint4 data4,
-                            uint *l_Data, const uint size){
+                            uint32_t *l_Data, const uint32_t size){
   //Level-0 inclusive scan
   data4.y() += data4.x();
   data4.z() += data4.y();
   data4.w() += data4.z();
 
   //Level-1 exclusive scan
-  uint val = scan1Inclusive(item, data4.w(), l_Data, size / 4) - data4.w();
+  uint32_t val = scan1Inclusive(item, data4.w(), l_Data, size / 4) - data4.w();
 
   return (data4 + (uint4)val);
 }
 
 inline uint4 scan4Exclusive(sycl::nd_item<1> &item, const uint4 data4,
-                            uint *l_Data, const uint size)
+                            uint32_t *l_Data, const uint32_t size)
 {
   return scan4Inclusive(item, data4, l_Data, size) - data4;
 }
@@ -151,10 +151,10 @@ inline uint4 scan4Exclusive(sycl::nd_item<1> &item, const uint4 data4,
 ////////////////////////////////////////////////////////////////////////////////
 void scanExclusiveLocal1K(
       sycl::nd_item<1> &item,
-      uint *d_Dst,
-      uint *d_Src,
-      uint *l_Data,
-      const uint size)
+      uint32_t *d_Dst,
+      uint32_t *d_Src,
+      uint32_t *l_Data,
+      const uint32_t size)
 {
     int i = item.get_global_id(0);
 
@@ -171,24 +171,24 @@ void scanExclusiveLocal1K(
 //Exclusive scan of top elements of bottom-level scans (4 * THREADBLOCK_SIZE)
 void scanExclusiveLocal2K(
       sycl::nd_item<1> &item,
-      uint *d_Buf,
-      uint *d_Dst,
-      uint *d_Src,
-      uint *l_Data,
-      const uint N,
-      const uint arrayLength)
+      uint32_t *d_Buf,
+      uint32_t *d_Dst,
+      uint32_t *d_Src,
+      uint32_t *l_Data,
+      const uint32_t N,
+      const uint32_t arrayLength)
 {
     //Load top elements
     //Convert results of bottom-level scan back to inclusive
     //Skip loads and stores for inactive work-items of the work-group with highest index(pos >= N)
-    uint data = 0;
+    uint32_t data = 0;
     int i = item.get_global_id(0);
     if(i < N)
       data = d_Dst[(4 * WORKGROUP_SIZE - 1) + (4 * WORKGROUP_SIZE) * i] +
              d_Src[(4 * WORKGROUP_SIZE - 1) + (4 * WORKGROUP_SIZE) * i];
 
     //Compute
-    uint odata = scan1Exclusive(item, data, l_Data, arrayLength);
+    uint32_t odata = scan1Exclusive(item, data, l_Data, arrayLength);
 
     //Avoid out-of-bound access
     if(i < N) d_Buf[i] = odata;
@@ -198,11 +198,11 @@ void scanExclusiveLocal2K(
 void uniformUpdateK(
       // uint4 *d_Data,
       sycl::nd_item<1> &item,
-      uint *d_Data,
-      uint *d_Buf,
-      uint &buf)
+      uint32_t *d_Data,
+      uint32_t *d_Buf,
+      uint32_t &buf)
 {
-    //__local uint buf[1];
+    //__local uint32_t buf[1];
 
     int i = item.get_global_id(0);
     //uint4 data4 = d_Data[get_global_id(0)];

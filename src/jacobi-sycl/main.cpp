@@ -237,7 +237,7 @@ int main() {
   auto end_time = std::chrono::steady_clock::now();
   auto total_time = std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count();
   double duration = total_time * 1e-9;
-  std::cout << "Total elapsed time: " << std::setprecision(4) << duration << " seconds" << std::endl;
+  std::cout << "Total elapsed time: " << std::setprecision(4) << duration << " seconds" << std::endl << std::flush;
 
   return 0;
 }

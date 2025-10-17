@@ -85,6 +85,7 @@ int main(int argc, char* argv[])
     auto end = std::chrono::steady_clock::now();
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     printf("Average execution time of kernel: %f (us)\n", (time * 1e-3f) / repeat);
+    fflush(stdout);
 
     q.memcpy(data_h, data_d, sizeof(data_t) * n).wait();
 

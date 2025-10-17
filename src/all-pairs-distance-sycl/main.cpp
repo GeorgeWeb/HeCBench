@@ -158,6 +158,7 @@ int main(int argc, char **argv) {
   q.memcpy(gpu_distance, d_distance, distance_bytes).wait();
 
   printf("Average kernel execution time: %f (us)\n", elapsedTime / iterations);
+  fflush(stdout);
   status = memcmp(cpu_distance, gpu_distance, INSTANCES * INSTANCES * sizeof(int));
   if (status != 0) printf("FAIL\n");
   else printf("PASS\n");
@@ -241,6 +242,7 @@ int main(int argc, char **argv) {
   q.memcpy(gpu_distance, d_distance, distance_bytes).wait();
 
   printf("Average kernel execution time: %f (us)\n", elapsedTime / iterations);
+  fflush(stdout);
   status = memcmp(cpu_distance, gpu_distance, INSTANCES * INSTANCES * sizeof(int));
   if (status != 0) printf("FAIL\n");
   else printf("PASS\n");
@@ -296,6 +298,7 @@ int main(int argc, char **argv) {
   q.memcpy(gpu_distance, d_distance, distance_bytes).wait();
 
   printf("Average kernel execution time: %f (us)\n", elapsedTime / iterations);
+  fflush(stdout);
   status = memcmp(cpu_distance, gpu_distance, INSTANCES * INSTANCES * sizeof(int));
   if (status != 0) printf("FAIL\n");
   else printf("PASS\n");

@@ -91,6 +91,7 @@ int COO(int m, int k, int n, int a_nnz, int repeat, int verify) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of SPGEMM (COO) compute: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   oneapi::mkl::sparse::release_matrix_handle(q, &handle, {}).wait();
 
@@ -224,6 +225,7 @@ int CSR(int m, int k, int n, int a_nnz, int repeat, int verify) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of SPGEMM (CSR) compute: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   oneapi::mkl::sparse::release_matrix_handle(q, &handle, {}).wait();
 

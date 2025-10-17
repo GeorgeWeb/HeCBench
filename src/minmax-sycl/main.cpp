@@ -69,6 +69,7 @@ template <typename T> void eval(const T bounding_box_size, const int repeat) {
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of onedpl:min() and onedpl:max(): %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   start = std::chrono::steady_clock::now();
 
@@ -84,6 +85,7 @@ template <typename T> void eval(const T bounding_box_size, const int repeat) {
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average execution time of onedpl:min_max(): %f (us)\n",
          (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   // Verify
   auto const min_itr = std::min_element(

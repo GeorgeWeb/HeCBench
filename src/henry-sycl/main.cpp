@@ -257,6 +257,7 @@ int main(int argc, char *argv[]) {
   printf("Number of actual insertions: %d\n", ninsertions);
   printf("Number of times we called the device kernel: %d\n", ncycles);
   printf("Average kernel execution time %f (s)\n", (total_time * 1e-9) / ncycles);
+  fflush(stdout);
 
   sycl::free(d_structureAtoms, q);
   sycl::free(d_boltzmannFactors, q);

@@ -37,26 +37,26 @@ using namespace aocl_utils;
 #define docEndingTag       0xFFFFFFFF
 
 // Params
-uint block_size = 64;
-uint repeat = 100;
-uint total_num_docs = 256*1024;
-uint total_doc_size = 0;
-uint total_doc_size_no_padding = 0;
+uint32_t block_size = 64;
+uint32_t repeat = 100;
+uint32_t total_num_docs = 256*1024;
+uint32_t total_doc_size = 0;
+uint32_t total_doc_size_no_padding = 0;
 
 // Host Buffers
-scoped_aligned_ptr<uint> h_docWordFrequencies_dimm1;
-scoped_aligned_ptr<uint> h_docWordFrequencies_dimm2;
+scoped_aligned_ptr<uint32_t> h_docWordFrequencies_dimm1;
+scoped_aligned_ptr<uint32_t> h_docWordFrequencies_dimm2;
 scoped_aligned_ptr<ulong> h_profileWeights;
 scoped_aligned_ptr<ulong> h_docInfo;
-scoped_aligned_ptr<uint> h_isWordInProfileHash;
-scoped_aligned_ptr<uint> h_startingDocID;
-scoped_aligned_ptr<uint> h_numItemsPerThread;
+scoped_aligned_ptr<uint32_t> h_isWordInProfileHash;
+scoped_aligned_ptr<uint32_t> h_startingDocID;
+scoped_aligned_ptr<uint32_t> h_numItemsPerThread;
 scoped_aligned_ptr<ulong> h_profileScore;
-scoped_aligned_ptr<uint> h_docSizes;
+scoped_aligned_ptr<uint32_t> h_docSizes;
 
-static uint m_z = 1;
-static uint m_w = 1;
-static uint rand_desh()
+static uint32_t m_z = 1;
+static uint32_t m_w = 1;
+static uint32_t rand_desh()
 {
     m_z = 36969 * (m_z & 65535) + (m_z >> 16);
     m_w = 18000 * (m_w & 65535) + (m_w >> 16);
@@ -76,11 +76,11 @@ double sampleNormal()
 #define DOC_LEN_SIGMA 100
 #define AVG_DOC_LEN   350
 
-uint get_doc_length()
+uint32_t get_doc_length()
 {
    int len = sampleNormal() * DOC_LEN_SIGMA + AVG_DOC_LEN;
    if (len < 10) { len = 10; } // Arbitray lower bound;
-   return (uint) len;
+   return (uint32_t) len;
 }
 
 // High-resolution timer.
@@ -118,9 +118,9 @@ void setupData()
    total_doc_size = 0; 	
    total_doc_size_no_padding = 0;
 
-   for (uint i=0; i<total_num_docs; i++) {
-      uint unpadded_size = get_doc_length();
-      uint size = unpadded_size & (~(2*block_size-1));
+   for (uint32_t i=0; i<total_num_docs; i++) {
+      uint32_t unpadded_size = get_doc_length();
+      uint32_t size = unpadded_size & (~(2*block_size-1));
       if (unpadded_size & ((2*block_size-1))) size += 2*block_size; // Multiple of block_size
       h_startingDocID[i] = total_doc_size/2;
       h_numItemsPerThread[i] = size / (2*block_size);
@@ -140,19 +140,19 @@ void setupData()
 
    printf("Creating Documents total_terms=%d (no_pad=%d)\n", total_doc_size, total_doc_size_no_padding);
 
-   for (uint i=0; i<total_doc_size/2; i++) {
+   for (uint32_t i=0; i<total_doc_size/2; i++) {
       h_docWordFrequencies_dimm1[i] = docEndingTag;
       h_docWordFrequencies_dimm2[i] = docEndingTag;
    }
-   for (uint doci=0; doci < total_num_docs; doci++)
+   for (uint32_t doci=0; doci < total_num_docs; doci++)
    {
-      uint start = h_startingDocID[doci];
-      uint size = h_docSizes[doci];
+      uint32_t start = h_startingDocID[doci];
+      uint32_t size = h_docSizes[doci];
 
-      for (uint i = 0; i < size/2; i++)
+      for (uint32_t i = 0; i < size/2; i++)
       {
-         uint term = (rand_desh()%((1L << 24)-1));
-         uint freq = (rand_desh()%254)+1;
+         uint32_t term = (rand_desh()%((1L << 24)-1));
+         uint32_t freq = (rand_desh()%254)+1;
          h_docWordFrequencies_dimm1[start + i] = (term << 8) | freq;
 
          term = (rand_desh()%((1L << 24)-1));
@@ -160,29 +160,29 @@ void setupData()
          h_docWordFrequencies_dimm2[start + i] = (term << 8) | freq;
       }
       if (size%2) {
-         uint term = (rand_desh()%((1L << 24)-1));
-         uint freq = (rand_desh()%254)+1;
+         uint32_t term = (rand_desh()%((1L << 24)-1));
+         uint32_t freq = (rand_desh()%254)+1;
          h_docWordFrequencies_dimm1[start + size/2] = (term << 8) | freq;
       }
    }
 
    h_profileWeights.reset( (1L << 24) );
-   for (uint i=0; i<(1L << BLOOM_SIZE); i++) {
+   for (uint32_t i=0; i<(1L << BLOOM_SIZE); i++) {
       h_isWordInProfileHash[i] = 0x0;
    }
    printf("Creating Profile\n");
-   for (uint i=0; i<(1L << 24); i++) {
+   for (uint32_t i=0; i<(1L << 24); i++) {
       h_profileWeights[i] = 0;
    }
 
-   for (uint i=0; i<16384; i++) {
-      uint entry = (rand_desh()%(1<<24));	
+   for (uint32_t i=0; i<16384; i++) {
+      uint32_t entry = (rand_desh()%(1<<24));	
 
       h_profileWeights[entry] = 10;
 
-      uint hash1 = entry >> BLOOM_1;  //this gives me the top 16 bits of the 24bit word id
+      uint32_t hash1 = entry >> BLOOM_1;  //this gives me the top 16 bits of the 24bit word id
       h_isWordInProfileHash[ hash1 >> 5 ] |= 1 << (hash1 & 0x1f);
-      uint hash2 = entry & BLOOM_2;  //this gives me the bottom 16 bits of the 24bit word id
+      uint32_t hash2 = entry & BLOOM_2;  //this gives me the bottom 16 bits of the 24bit word id
       h_isWordInProfileHash[ hash2 >> 5 ] |= 1 << (hash2 & 0x1f);
    }
 }
@@ -192,23 +192,23 @@ void runOnCPU()
    // go through each document in turn, and compute the score
    scoped_aligned_ptr<ulong> cpu_profileScore;
    cpu_profileScore.reset( total_num_docs );
-   uint total = 0;
-   uint falsies = 0;
-   for (uint doci=0; doci < total_num_docs; doci++)
+   uint32_t total = 0;
+   uint32_t falsies = 0;
+   for (uint32_t doci=0; doci < total_num_docs; doci++)
    {
 
       cpu_profileScore[doci] = 0.0;
-      uint start = h_startingDocID[doci];
-      uint size = h_docSizes[doci];
+      uint32_t start = h_startingDocID[doci];
+      uint32_t size = h_docSizes[doci];
 
-      for (uint i = 0; i < size/2 + (size%2); i++)
+      for (uint32_t i = 0; i < size/2 + (size%2); i++)
       {
-         uint curr_entry = h_docWordFrequencies_dimm1[start + i];
-         uint frequency = curr_entry & 0x00ff;
-         uint word_id = curr_entry >> 8;
-         uint hash1 = word_id >> BLOOM_1;  //this gives me the top 16 bits of the 24bit word id
+         uint32_t curr_entry = h_docWordFrequencies_dimm1[start + i];
+         uint32_t frequency = curr_entry & 0x00ff;
+         uint32_t word_id = curr_entry >> 8;
+         uint32_t hash1 = word_id >> BLOOM_1;  //this gives me the top 16 bits of the 24bit word id
          bool inh1 = h_isWordInProfileHash[ hash1 >> 5 ] & ( 1 << (hash1 & 0x1f));
-         uint hash2 = word_id & BLOOM_2;  //this gives me the bottom 16 bits of the 24bit word id
+         uint32_t hash2 = word_id & BLOOM_2;  //this gives me the bottom 16 bits of the 24bit word id
          bool inh2 = h_isWordInProfileHash[ hash2 >> 5 ] & ( 1 << (hash2 & 0x1f));
 
          if (inh1 && inh2)
@@ -219,14 +219,14 @@ void runOnCPU()
          }
       }
 
-      for (uint i = 0; i < size/2; i++)
+      for (uint32_t i = 0; i < size/2; i++)
       {
-         uint curr_entry = h_docWordFrequencies_dimm2[start + i];
-         uint frequency = curr_entry & 0x00ff;
-         uint word_id = curr_entry >> 8;
-         uint hash1 = word_id >> BLOOM_1;  //this gives me the top 16 bits of the 24bit word id
+         uint32_t curr_entry = h_docWordFrequencies_dimm2[start + i];
+         uint32_t frequency = curr_entry & 0x00ff;
+         uint32_t word_id = curr_entry >> 8;
+         uint32_t hash1 = word_id >> BLOOM_1;  //this gives me the top 16 bits of the 24bit word id
          bool inh1 = h_isWordInProfileHash[ hash1 >> 5 ] & ( 1 << (hash1 & 0x1f));
-         uint hash2 = word_id & BLOOM_2;  //this gives me the bottom 16 bits of the 24bit word id
+         uint32_t hash2 = word_id & BLOOM_2;  //this gives me the bottom 16 bits of the 24bit word id
          bool inh2 = h_isWordInProfileHash[ hash2 >> 5 ] & ( 1 << (hash2 & 0x1f));
 
          if (inh1 && inh2)
@@ -241,7 +241,7 @@ void runOnCPU()
    printf( "total_access = %d , falsies = %d, percentage = %f hit= %g\n", \
 		   total, falsies, total * 1.0f / total_doc_size, (total-falsies)*1.0f/total_doc_size );
    // compare the final scores
-   for (uint doci = 0; doci < total_num_docs; doci++)
+   for (uint32_t doci = 0; doci < total_num_docs; doci++)
    {
       if (cpu_profileScore[doci] != h_profileScore[doci]) {
          printf("FAILED\n   : doc[%d] score: CPU = %lu, Device = %lu\n", \
@@ -253,13 +253,13 @@ void runOnCPU()
 }
 
 
-ulong mulfp( ulong weight, uint freq )
+ulong mulfp( ulong weight, uint32_t freq )
 {
-   uint part1 = weight & 0xFFFFF;         // lower 24-bits of weight
-   uint part2 = (weight >> 24) & 0xFFFF;  // next 16-bits
+   uint32_t part1 = weight & 0xFFFFF;         // lower 24-bits of weight
+   uint32_t part2 = (weight >> 24) & 0xFFFF;  // next 16-bits
 
-   uint res1 = part1 * freq;
-   uint res2 = part2 * freq;
+   uint32_t res1 = part1 * freq;
+   uint32_t res2 = part2 * freq;
 
    return (ulong)res1 + (((ulong)res2) << 24);
 }
@@ -269,12 +269,12 @@ int main(int argc, char** argv)
   Options options(argc, argv);
   // Optional argument to specify the problem size.
   if(options.has("n")) {
-     total_num_docs = options.get<uint>("n");
+     total_num_docs = options.get<uint32_t>("n");
   }
   printf("Total number of documents: %u\n", total_num_docs);
 
   if(options.has("p")) {
-    repeat = options.get<uint>("p");
+    repeat = options.get<uint32_t>("p");
   }
   printf("Kernel execution count: %u\n", repeat);
 
@@ -294,42 +294,42 @@ int main(int argc, char** argv)
   size_t gws_reduce = total_num_docs;
   size_t lws_reduce = block_size;
 
-  uint *d_docWordFrequencies_dimm1 = sycl::malloc_device<uint>(total_doc_size/2, q);
-  uint *d_docWordFrequencies_dimm2 = sycl::malloc_device<uint>(total_doc_size/2, q);
-  uint *d_partialSums_dimm1 = sycl::malloc_device<uint>(total_doc_size/(2*block_size), q);
-  uint *d_partialSums_dimm2 = sycl::malloc_device<uint>(total_doc_size/(2*block_size), q);
+  uint32_t *d_docWordFrequencies_dimm1 = sycl::malloc_device<uint32_t>(total_doc_size/2, q);
+  uint32_t *d_docWordFrequencies_dimm2 = sycl::malloc_device<uint32_t>(total_doc_size/2, q);
+  uint32_t *d_partialSums_dimm1 = sycl::malloc_device<uint32_t>(total_doc_size/(2*block_size), q);
+  uint32_t *d_partialSums_dimm2 = sycl::malloc_device<uint32_t>(total_doc_size/(2*block_size), q);
   ulong *d_profileWeights_dimm1 = sycl::malloc_device<ulong>((1L << 24), q);
   ulong *d_profileWeights_dimm2 = sycl::malloc_device<ulong>((1L << 24), q);
-  uint *d_isWordInProfileHash = sycl::malloc_device<uint>(1L << BLOOM_SIZE, q);
+  uint32_t *d_isWordInProfileHash = sycl::malloc_device<uint32_t>(1L << BLOOM_SIZE, q);
   ulong *d_docInfo = sycl::malloc_device<ulong>(total_num_docs, q);
   ulong *d_profileScore = sycl::malloc_device<ulong>(total_num_docs, q);
 
-  q.memcpy(d_docWordFrequencies_dimm1, h_docWordFrequencies_dimm1, sizeof(uint) * total_doc_size/2);
-  q.memcpy(d_docWordFrequencies_dimm2, h_docWordFrequencies_dimm2, sizeof(uint) * total_doc_size/2);
+  q.memcpy(d_docWordFrequencies_dimm1, h_docWordFrequencies_dimm1, sizeof(uint32_t) * total_doc_size/2);
+  q.memcpy(d_docWordFrequencies_dimm2, h_docWordFrequencies_dimm2, sizeof(uint32_t) * total_doc_size/2);
   q.memcpy(d_profileWeights_dimm1, h_profileWeights, sizeof(ulong) * (1L << 24));
   q.memcpy(d_profileWeights_dimm2, h_profileWeights, sizeof(ulong) * (1L << 24));
-  q.memcpy(d_isWordInProfileHash, h_isWordInProfileHash, sizeof(uint) * (1L << BLOOM_SIZE));
+  q.memcpy(d_isWordInProfileHash, h_isWordInProfileHash, sizeof(uint32_t) * (1L << BLOOM_SIZE));
   q.memcpy(d_docInfo, h_docInfo, sizeof(ulong) * total_num_docs);
 
   q.wait();
 
   const double start_time = getCurrentTimestamp();
-  for (uint i=0; i<repeat; i++) {
+  for (uint32_t i=0; i<repeat; i++) {
     q.submit([&] (sycl::handler &h) {
       sycl::local_accessor<ulong, 1> partial (sycl::range<1>(NUM_THREADS_PER_WG/MANUAL_VECTOR), h);
       h.parallel_for<class compute>(
       sycl::nd_range<1>(gws_compute, lws_compute), [=] (sycl::nd_item<1> item) {
-        uint curr_entry[MANUAL_VECTOR];
-        uint word_id[MANUAL_VECTOR];
-        uint freq[MANUAL_VECTOR];
-        uint hash1[MANUAL_VECTOR];
-        uint hash2[MANUAL_VECTOR];
+        uint32_t curr_entry[MANUAL_VECTOR];
+        uint32_t word_id[MANUAL_VECTOR];
+        uint32_t freq[MANUAL_VECTOR];
+        uint32_t hash1[MANUAL_VECTOR];
+        uint32_t hash2[MANUAL_VECTOR];
         bool is_end[MANUAL_VECTOR];
         bool make_access[MANUAL_VECTOR];
 
         ulong sum = 0;
         //#pragma unroll
-        for (uint i=0; i<MANUAL_VECTOR; i++) {
+        for (uint32_t i=0; i<MANUAL_VECTOR; i++) {
            curr_entry[i] = d_docWordFrequencies_dimm1[item.get_global_id(0)*MANUAL_VECTOR + i]; 
            freq[i] = curr_entry[i] & 0xff;
            word_id[i] = curr_entry[i] >> 8;
@@ -344,7 +344,7 @@ int main(int argc, char** argv)
         }
 
         //#pragma unroll
-        for (uint i=0; i<MANUAL_VECTOR; i++) {
+        for (uint32_t i=0; i<MANUAL_VECTOR; i++) {
            curr_entry[i] = d_docWordFrequencies_dimm2[item.get_global_id(0)*MANUAL_VECTOR + i]; 
            freq[i] = curr_entry[i] & 0xff;
            word_id[i] = curr_entry[i] >> 8;
@@ -366,8 +366,8 @@ int main(int argc, char** argv)
            res.load(0, partial.get_pointer());
            ulong final_result = res.s0() + res.s1() + res.s2() + res.s3() +
                                 res.s4() + res.s5() + res.s6() + res.s7();
-           d_partialSums_dimm1[item.get_group(0)] = (uint) (final_result >> 32); 
-           d_partialSums_dimm2[item.get_group(0)] = (uint) (final_result & 0xFFFFFFFF); 
+           d_partialSums_dimm1[item.get_group(0)] = (uint32_t) (final_result >> 32); 
+           d_partialSums_dimm2[item.get_group(0)] = (uint32_t) (final_result & 0xFFFFFFFF); 
         }
       });
     });
@@ -376,12 +376,12 @@ int main(int argc, char** argv)
       h.parallel_for<class reduction>(
         sycl::nd_range<1>(gws_reduce, lws_reduce), [=] (sycl::nd_item<1> item) {
         ulong info = d_docInfo[item.get_global_id(0)];
-        uint start = info >> 32;
-        uint end = info & 0xFFFFFFFF;
+        uint32_t start = info >> 32;
+        uint32_t end = info & 0xFFFFFFFF;
 
         ulong total = 0;
         #pragma unroll 2
-        for (uint i=start; i<=end; i++) {
+        for (uint32_t i=start; i<=end; i++) {
            ulong upper = d_partialSums_dimm1[i];
            ulong lower = d_partialSums_dimm2[i];
            ulong sum = (upper << 32) | lower;

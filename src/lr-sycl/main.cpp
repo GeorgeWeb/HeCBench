@@ -89,6 +89,7 @@ int main(int argc, char* argv[]) {
 
   printf("Average kernel execution time: %lf us\n",
          results.parallelized.ktime * 1e-3 / repeat);
+  fflush(stdout);
 
   write_results(&results, "a");
 

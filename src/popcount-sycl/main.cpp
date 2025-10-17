@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pc1): %f (us)\n", (time * 1e-3) / repeat);
+  fflush(stdout);
 
   q.memcpy(result, d_r, sizeof(int)*length).wait();
   checkResults(data, result, length);
@@ -120,6 +121,7 @@ int main(int argc, char* argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pc2): %f (us)\n", (time * 1e-3) / repeat);
+  fflush(stdout);
 
   q.memcpy(result, d_r, sizeof(int)*length).wait();
   checkResults(data, result, length);
@@ -142,6 +144,7 @@ int main(int argc, char* argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pc3): %f (us)\n", (time * 1e-3) / repeat);
+  fflush(stdout);
 
   q.memcpy(result, d_r, sizeof(int)*length).wait();
   checkResults(data, result, length);
@@ -168,6 +171,7 @@ int main(int argc, char* argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pc4): %f (us)\n", (time * 1e-3) / repeat);
+  fflush(stdout);
 
   q.memcpy(result, d_r, sizeof(int)*length).wait();
   checkResults(data, result, length);
@@ -199,6 +203,7 @@ int main(int argc, char* argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pc5): %f (us)\n", (time * 1e-3) / repeat);
+  fflush(stdout);
 
   q.memcpy(result, d_r, sizeof(int)*length).wait();
   checkResults(data, result, length);
@@ -219,6 +224,7 @@ int main(int argc, char* argv[])
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time (pc6): %f (us)\n", (time * 1e-3) / repeat);
+  fflush(stdout);
 
   q.memcpy(result, d_r, sizeof(int)*length).wait();
   checkResults(data, result, length);

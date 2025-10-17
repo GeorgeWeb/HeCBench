@@ -244,6 +244,7 @@ void run_gpu_kernel(
   wkf_timer_stop(timer);
   double avg_kernel_time = wkf_timer_time(timer) / ((double) itmax);
   printf("Average kernel execution time: %1.12g\n", avg_kernel_time);
+  fflush(stdout);
 
   // read output image
   q.memcpy(val, d_val, sizeof(float)*ngrid).wait();
@@ -302,6 +303,7 @@ void run_cpu_kernel(
   wkf_timer_stop(timer);
   double avg_kernel_time = wkf_timer_time(timer) / ((double) itmax);
   printf("Average kernel execution time: %1.12g\n", avg_kernel_time);
+  fflush(stdout);
 
   wkf_timer_destroy(timer);
 }

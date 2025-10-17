@@ -121,6 +121,7 @@ int main(int argc, char** argv)
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Average kernel execution time: %f (s)\n", (time * 1e-9f) / repeat);
+  fflush(stdout);
 
   q.memcpy(d_output, d_result, mem_size_output*i_img_count).wait();
 

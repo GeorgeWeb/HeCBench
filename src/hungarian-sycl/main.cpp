@@ -1010,6 +1010,7 @@ int main(int argc, char* argv[])
     auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     total_time += time;
     printf("Total kernel execution time of the Hungarian algorithm %f (s)\n", time * 1e-9f);
+    fflush(stdout);
 
     fflush(file);
 

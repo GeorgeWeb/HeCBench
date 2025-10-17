@@ -31,9 +31,9 @@ void run_solver(
   const DOUBLE *__restrict__ sol_in,
   DOUBLE *__restrict__ sol_out,
   bool *__restrict__ con,
-  const uint*__restrict__ list,
+  const uint32_t*__restrict__ list,
   int xdim, int ydim, int zdim,
-  int nIter, uint nActiveBlock);
+  int nIter, uint32_t nActiveBlock);
 //
 // run_reduction
 //
@@ -45,8 +45,8 @@ void run_reduction(
   sycl::nd_item<3> &item,
   const bool *__restrict__ con,
   bool *__restrict__ listVol,
-  const uint *__restrict__ list,
-  uint nActiveBlock);
+  const uint32_t *__restrict__ list,
+  uint32_t nActiveBlock);
 //
 // if block is active block, copy values
 // if block is neighbor, run solver once
@@ -59,9 +59,9 @@ void run_check_neighbor(
   const DOUBLE *__restrict__ sol_in,
   DOUBLE *__restrict__ sol_out,
   bool *__restrict__ con,
-  const uint*__restrict__ list,
+  const uint32_t*__restrict__ list,
   int xdim, int ydim, int zdim,
-  uint nActiveBlock, uint nTotalBlock);
+  uint32_t nActiveBlock, uint32_t nTotalBlock);
 
 #endif
 

@@ -236,6 +236,7 @@ int main(int argc, char* argv[])
   }
 
   printf("Average execution time of postprocess kernel: %f (us)\n", (time * 1e-3f) / repeat);
+  fflush(stdout);
 
   int bndbox_num;
   q.memcpy(&bndbox_num, d_object_counter, sizeof(int));

@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   }
 
   size_t numElem = atol(argv[1]);
-  uint repeat = atoi(argv[2]);
+  uint32_t repeat = atoi(argv[2]);
 
   srand(2);
   size_t aSize = numElem;

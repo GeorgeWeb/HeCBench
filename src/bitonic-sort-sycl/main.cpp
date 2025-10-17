@@ -118,6 +118,7 @@ void ParallelBitonicSort(int input[], int n) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Total kernel execution time: %f (ms)\n", time * 1e-6f);
+  fflush(stdout);
 
   q.memcpy(input, d_input, size_bytes).wait();
   sycl::free(d_input, q);

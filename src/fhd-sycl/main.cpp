@@ -156,6 +156,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   printf("Device execution time %f (s)\n", time * 1e-9f);
+  fflush(stdout);
 
   q.memcpy(rfhd, d_rfhd, sampleSize);
   q.memcpy(ifhd, d_ifhd, sampleSize);
